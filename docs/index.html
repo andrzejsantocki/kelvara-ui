@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Kelvara Docs | Solana Risk Monitoring Overview</title>
+  <meta name="description" content="Technical overview of Kelvara's planned Solana risk monitoring: program upgrades, authority changes, liquidity anomalies, evidence, and alerts.">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <link rel="canonical" href="https://kelvara.xyz/docs/">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#183c2b">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Kelvara">
+  <meta property="og:title" content="Kelvara Docs | Solana Risk Monitoring Overview">
+  <meta property="og:description" content="Technical overview of Kelvara's planned risk signals, evidence model, and operating principles.">
+  <meta property="og:url" content="https://kelvara.xyz/docs/">
+  <meta property="og:image" content="https://kelvara.xyz/og-image.svg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Kelvara Docs | Solana Risk Monitoring Overview">
+  <meta name="twitter:description" content="Planned Solana risk signals, evidence model, and operating principles.">
+  <meta name="twitter:image" content="https://kelvara.xyz/og-image.svg">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Kelvara technical overview","description":"Overview of Kelvara's planned Solana risk monitoring system.","url":"https://kelvara.xyz/docs/","publisher":{"@type":"Organization","name":"Kelvara","url":"https://kelvara.xyz/"}}</script>
+</head>
+<body>
+  <header class="site-header wrap">
+    <a class="brand" href="/" aria-label="Kelvara home"><span class="mark">K</span>Kelvara</a>
+    <nav class="nav" aria-label="Main navigation"><a href="/">Home</a><a href="/docs/" aria-current="page">Docs</a></nav>
+  </header>
+  <div class="docs-shell wrap">
+    <aside class="toc"><strong>Documentation</strong><nav aria-label="Documentation sections"><a href="#overview">Overview</a><a href="#signals">Risk signals</a><a href="#evidence">Evidence model</a><a href="#delivery">Delivery model</a><a href="#principles">Operating principles</a><a href="#status">Status</a></nav></aside>
+    <main class="docs">
+      <p class="eyebrow">Technical overview</p>
+      <h1>Kelvara documentation</h1>
+      <p class="lead">Kelvara is an API-first Solana risk-intelligence system under development. This page defines the product direction without presenting unfinished capabilities as live.</p>
+      <div class="note"><strong>Development notice.</strong> Kelvara is not yet a production monitoring service. Interfaces, thresholds, coverage, and service levels may change.</div>
+
+      <section id="overview"><h2>Overview</h2><p>Solana protocols generate large volumes of on-chain state changes. Some events materially alter risk: a program is upgraded, a privileged authority changes, or liquidity moves outside its normal range. Kelvara's goal is to detect those events early, attach reproducible evidence, and deliver them in a form an operational team can use.</p><p>The intended users are security, risk, treasury, and protocol operations teams that need machine-readable monitoring without losing the underlying chain context.</p></section>
+
+      <section id="signals"><h2>Risk signals</h2><h3>Program upgrades</h3><p>Monitor upgradeable programs for code deployment and related executable-state changes. A useful signal should identify the affected program, observed slot and time, relevant transaction, previous state, and resulting state.</p><h3>Authority changes</h3><p>Track changes to upgrade, administrative, mint, freeze, and other privileged authorities where coverage supports them. Severity should reflect the authority's capability and the protocol's declared operating model.</p><h3>Liquidity anomalies</h3><p>Compare liquidity and TVL observations against historical behavior. Detection should account for market movement, ordinary user flow, pool structure, and data quality before escalating an anomaly.</p></section>
+
+      <section id="evidence"><h2>Evidence model</h2><p>An alert without evidence creates more work. Each Kelvara signal is intended to carry enough context for independent verification:</p><ul><li>stable signal identifier and versioned signal type;</li><li>network, slot, block time, accounts, and transaction signatures;</li><li>before-and-after values when they can be reconstructed reliably;</li><li>detection time, confirmation state, and data-source provenance;</li><li>confidence, severity, and explicit reasons for the classification.</li></ul><p>Consumers should be able to follow references back to chain data rather than trust an opaque score.</p></section>
+
+      <section id="delivery"><h2>Delivery model</h2><p>The planned product is API-first. Candidate interfaces include a historical query API, webhooks for time-sensitive events, and a compact dashboard for investigation. Delivery guarantees and schemas will be documented before public availability.</p><table><tr><th>Interface</th><th>Intended role</th></tr><tr><td>API</td><td>Query signals, entities, evidence, and monitoring state.</td></tr><tr><td>Webhooks</td><td>Deliver signed, retryable event notifications to operational systems.</td></tr><tr><td>Dashboard</td><td>Review signal history and supporting evidence.</td></tr></table></section>
+
+      <section id="principles"><h2>Operating principles</h2><ul><li><strong>Evidence before assertion.</strong> Material claims link to verifiable observations.</li><li><strong>Deterministic history.</strong> Reprocessing the same finalized chain range should produce explainable results.</li><li><strong>Explicit uncertainty.</strong> Missing data and ambiguous classifications are surfaced, not hidden.</li><li><strong>Low-noise defaults.</strong> Alert quality matters more than raw event volume.</li><li><strong>Stable contracts.</strong> API and event schema changes are versioned.</li><li><strong>Operational honesty.</strong> Coverage, latency, incidents, and limitations are documented.</li></ul></section>
+
+      <section id="status"><h2>Project status</h2><p>Research and implementation are in progress. Public API access, network coverage, pricing, and service-level objectives have not been announced. This documentation will expand as interfaces become stable and verifiable.</p><p>Last updated: <time datetime="2026-09-26">26 September 2026</time>.</p></section>
+    </main>
+  </div>
+  <footer class="site-footer wrap"><strong>Kelvara</strong><span><a href="/">Home</a> · Solana risk intelligence</span></footer>
+</body>
+</html>

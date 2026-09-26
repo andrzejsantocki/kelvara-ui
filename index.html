@@ -1,27 +1,58 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Kelvara — institutional-grade Solana risk intelligence.">
-  <title>Kelvara — Solana Risk Intelligence</title>
-  <style>
-    :root { color-scheme: light; --ink:#111827; --muted:#64748b; --line:#e2e8f0; --accent:#2563eb; }
-    * { box-sizing:border-box; }
-    body { margin:0; min-height:100vh; display:grid; place-items:center; padding:24px; background:#fff; color:var(--ink); font:16px/1.6 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
-    main { width:min(720px,100%); }
-    .mark { width:42px; height:42px; display:grid; place-items:center; border:1px solid var(--line); border-radius:12px; font-weight:800; color:var(--accent); }
-    h1 { margin:32px 0 12px; font-size:clamp(3rem,10vw,6rem); line-height:.95; letter-spacing:-.07em; }
-    p { max-width:580px; margin:0; color:var(--muted); font-size:clamp(1rem,2.5vw,1.25rem); }
-    footer { margin-top:64px; padding-top:20px; border-top:1px solid var(--line); color:var(--muted); font-size:.875rem; }
-  </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Kelvara | Solana Risk Intelligence</title>
+  <meta name="description" content="Kelvara is building institutional-grade Solana risk intelligence for program upgrades, authority changes, and liquidity anomalies.">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <link rel="canonical" href="https://kelvara.xyz/">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#183c2b">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Kelvara">
+  <meta property="og:title" content="Kelvara | Solana Risk Intelligence">
+  <meta property="og:description" content="Early risk signals for Solana programs, authorities, and liquidity.">
+  <meta property="og:url" content="https://kelvara.xyz/">
+  <meta property="og:image" content="https://kelvara.xyz/og-image.svg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Kelvara | Solana Risk Intelligence">
+  <meta name="twitter:description" content="Early risk signals for Solana programs, authorities, and liquidity.">
+  <meta name="twitter:image" content="https://kelvara.xyz/og-image.svg">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Kelvara","url":"https://kelvara.xyz/","description":"Institutional-grade Solana risk intelligence."}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Kelvara","url":"https://kelvara.xyz/"}</script>
 </head>
 <body>
+  <header class="site-header wrap">
+    <a class="brand" href="/" aria-label="Kelvara home"><span class="mark">K</span>Kelvara</a>
+    <nav class="nav" aria-label="Main navigation"><a href="/#focus">Focus</a><a href="/docs/">Docs</a></nav>
+  </header>
   <main>
-    <div class="mark" aria-hidden="true">K</div>
-    <h1>Kelvara</h1>
-    <p>Institutional-grade Solana risk intelligence. Early detection for program upgrades, authority changes, and liquidity anomalies.</p>
-    <footer>Coming soon.</footer>
+    <section class="hero wrap">
+      <p class="eyebrow">In development</p>
+      <h1>See Solana risk <span>before it compounds.</span></h1>
+      <p class="lead">Kelvara is building institutional-grade telemetry for early detection of program upgrades, authority changes, and liquidity anomalies across Solana.</p>
+      <div class="actions"><a class="button" href="/docs/">Read the technical overview</a><a class="button secondary" href="#status">Project status</a></div>
+    </section>
+    <section class="section" id="focus">
+      <div class="wrap">
+        <h2>Signals with operational context.</h2>
+        <p class="section-intro">Raw events are easy to collect. Kelvara is designed to turn them into attributable, time-sensitive risk signals that teams can verify and act on.</p>
+        <div class="grid">
+          <article class="card"><span class="number">01</span><h3>Program intelligence</h3><p>Detect upgrades and executable-state changes. Preserve the evidence needed to understand what changed and when.</p></article>
+          <article class="card"><span class="number">02</span><h3>Authority monitoring</h3><p>Track privileged authority changes and surface control-plane events that alter a protocol's security assumptions.</p></article>
+          <article class="card"><span class="number">03</span><h3>Liquidity telemetry</h3><p>Identify unusual liquidity and TVL movements, then distinguish meaningful anomalies from ordinary market noise.</p></article>
+        </div>
+      </div>
+    </section>
+    <section class="section" id="status">
+      <div class="wrap status">
+        <div><h2>Foundation first.</h2><p class="section-intro">The public product is not yet available. Architecture, signal definitions, validation methods, and operational safeguards are being developed before access opens.</p></div>
+        <aside class="status-box"><strong>Current status</strong><p>Research and implementation in progress. No production monitoring service, API, token, or investment product is currently offered through this website.</p></aside>
+      </div>
+    </section>
   </main>
+  <footer class="site-footer wrap"><strong>Kelvara</strong><span>Solana risk intelligence · Site under development</span></footer>
 </body>
 </html>
