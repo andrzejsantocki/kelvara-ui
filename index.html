@@ -28,11 +28,10 @@
 <body>
   <header class="site-header wrap">
     <a class="brand" href="/" aria-label="Kelvara home"><img class="mark" src="/assets/kelvara-icon.png" alt="" width="36" height="36">Kelvara</a>
-    <nav class="nav" aria-label="Main navigation"><a href="/#focus">Focus</a><a href="/demo/">Demo</a><a href="/docs/">Docs</a><a class="nav-launch" href="https://app.kelvara.xyz">Launch app</a></nav>
+    <nav class="nav" aria-label="Main navigation"><a href="/demo/">Demo</a><a href="/docs/">Docs</a><a class="nav-launch" href="https://app.kelvara.xyz">Launch app</a></nav>
   </header>
   <main>
     <section class="hero wrap">
-      <p class="eyebrow">In development</p>
       <h1>See Solana risk <span>before it compounds.</span></h1>
       <p class="lead">Kelvara is building institutional-grade telemetry for early detection of program upgrades, authority changes, and liquidity anomalies across Solana.</p>
       <div class="actions"><a class="button" href="https://app.kelvara.xyz">Launch app</a><a class="button secondary" href="/demo/">Try Devnet demo</a><a class="button tertiary" href="/docs/">Technical overview</a></div>
@@ -55,6 +54,7 @@
       </div>
     </section>
   </main>
-  <footer class="site-footer wrap"><strong>Kelvara</strong><span>Solana risk intelligence · Site under development</span></footer>
+  <footer class="site-footer wrap"><strong>Kelvara</strong><span>Kelvara · © <span data-current-year></span></span></footer>
+  <script>document.querySelectorAll('[data-current-year]').forEach((element) => { element.textContent = new Date().getFullYear(); });</script>
 </body>
 </html>
