@@ -12,8 +12,8 @@ def test_kelvara_catalog_page_is_truthful_and_responsive():
         'Type', 'Protocol', 'Chain', 'USDG Steakhouse', 'Kamino', 'USDG',
         'Solana', 'Coverage unknown', 'TVL not verified', 'Known asset', 'Across 1 protocol',
         'Monitor what can change.', 'prefers-reduced-motion', 'Connect wallet',
-        'assets/kamino.svg', 'assets/steakhouse-usdg.svg', 'assets/tokens/usdc.svg',
-        'assets/tokens/usdt.svg', 'assets/tokens/solana.svg', 'assets/steakhouse-usdg.svg'
+        'assets/kamino.svg', 'assets/tokens/usdg.png', 'assets/tokens/usdc.svg',
+        'assets/tokens/usdt.svg', 'assets/tokens/solana.svg'
     ]
     for text in required:
         assert text in HTML, text
@@ -66,3 +66,12 @@ def test_rejected_old_hero_patterns_are_removed():
     assert 'See what controls your onchain positions.' not in HTML
     assert 'MAINNET DEFI PROTECTION' not in HTML
     assert 'Illustrative product state' not in HTML
+
+
+def test_table_icons_use_standalone_chain_and_token_marks():
+    import re
+    assert 'assets/steakhouse-usdg.svg' not in re.search(r'<table\b[\s\S]*?</table>', HTML, re.I).group(0)
+    sol = (ROOT / 'assets/tokens/solana.svg').read_text()
+    assert '646' not in sol and '96' not in sol
+    assert 'viewBox="0 0 24 24"' in sol or 'viewBox="0 0 32 32"' in sol
+    assert '2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH' in (ROOT / 'assets/tokens/PROVENANCE.md').read_text()
