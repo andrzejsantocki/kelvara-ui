@@ -56,4 +56,3 @@ body.modal-open{overflow:hidden}
 #stage-connect.active .connect-grid{order:1;flex:none}
 #stage-connect.active .authority-bg{position:relative;order:2;z-index:0;inset:auto;width:100vw;height:clamp(420px,42vw,620px);margin:96px calc(50% - 50vw) 0;object-fit:cover;transform:translate3d(var(--bg-x,0),var(--bg-y,0),0) scale(1.02)}
 @media(max-width:850px){#stage-connect.active .authority-bg{height:clamp(340px,70vw,520px);margin-top:40px}}
-
