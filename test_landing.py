@@ -6,12 +6,18 @@ HTML = (ROOT / 'index.deployed.html').read_text()
 
 def test_kelvara_catalog_page_is_truthful_and_responsive():
     required = [
-        'Monitoring critical onchain infrastructure.', 'Assets Under Monitoring',
-        'Vaults Under Monitoring', 'Monitoring Scopes', 'Authority Changes',
-        'Economics', 'Program Upgrades', 'Monitored Assets', 'Search assets',
-        'Type', 'Protocol', 'Chain', 'USDG Steakhouse', 'Kamino', 'USDG',
-        'Solana', 'Coverage unknown', 'TVL not verified', 'Known asset', 'Across 1 protocol',
-        'Monitor what can change.', 'prefers-reduced-motion', 'Connect wallet',
+        'DEFI POSITION MONITORING', 'Know what changed before your capital is at risk.',
+        'Kelvara monitors the control, economic, and upgrade assumptions behind your DeFi positions—so you can verify changes and prepare a constrained exit before you need one.',
+        'Check my positions', 'SUPPORTED VAULTS', 'Across 1 protocol', 'MONITORED VAULT TVL',
+        'Not verified', 'Know what can change around your position.',
+        'Continuous evidence for the risks you actually control.', 'Authority Changes',
+        'Privileged control and ownership changes.', 'Position Economics',
+        'Fees, limits, caps, and other parameters affecting your position.', 'Program Upgrades',
+        'Changes to the code your position depends on.', 'COVERAGE', 'Supported Positions',
+        'Vaults Kelvara can inspect, monitor, and prepare for exit.', 'Position', 'Strategy',
+        'Deposit', 'RWA Yield', 'Kamino • Solana', 'Type', 'Protocol', 'Chain',
+        'USDG Steakhouse', 'Kamino', 'USDG', 'Solana', 'Coverage unknown', 'TVL not verified',
+        'Across 1 protocol', 'prefers-reduced-motion', 'Connect wallet',
         'assets/kamino.svg', 'assets/tokens/usdg.png', 'assets/tokens/usdc.svg',
         'assets/tokens/usdt.svg', 'assets/tokens/solana.svg'
     ]
@@ -30,6 +36,9 @@ def test_kelvara_catalog_page_is_truthful_and_responsive():
     assert 'scope-num' not in HTML and '>01<' not in HTML and '>02<' not in HTML and '>03<' not in HTML
     assert 'Unknown</td>' not in HTML and '3 scopes' not in HTML and '3 active' not in HTML
     assert 'title="TVL not verified"' in HTML
+    for forbidden in ('$47.4M', 'Protected Capital', '3 scopes', '3 / 3', 'Infrastructure monitoring.', 'Monitored Assets', 'Known monitored asset'):
+        assert forbidden not in HTML, forbidden
+    assert 'id="connect-wallet"' in HTML
 
 
 def test_token_assets_are_local_images_with_provenance():
