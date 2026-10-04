@@ -56,3 +56,11 @@ body.modal-open{overflow:hidden}
 #stage-connect.active .connect-grid{order:1;flex:none}
 #stage-connect.active .authority-bg{position:relative;order:2;z-index:0;inset:auto;width:100vw;height:clamp(420px,42vw,620px);margin:96px calc(50% - 50vw) 0;object-fit:cover;transform:translate3d(var(--bg-x,0),var(--bg-y,0),0) scale(1.02)}
 @media(max-width:850px){#stage-connect.active .authority-bg{height:clamp(340px,70vw,520px);margin-top:40px}}
+
+/* Scope card radial dot fields */
+.scope{position:relative;overflow:hidden;--scope-dot:#7658d8}
+.scope-economics{--scope-dot:#3f9a62}
+.scope-program{--scope-dot:#d9853f}
+.scope::before{content:"";position:absolute;inset:0;background-image:radial-gradient(circle,var(--scope-dot) 1px,transparent 1.2px);background-size:17px 17px;background-position:calc(100% - 18px) 18px;opacity:.12;mask-image:radial-gradient(ellipse 170px 145px at 100% 0%,#000 0%,transparent 78%);-webkit-mask-image:radial-gradient(ellipse 170px 145px at 100% 0%,#000 0%,transparent 78%);pointer-events:none}
+.scope>*{position:relative;z-index:1}
+@media(prefers-reduced-motion:reduce){.scope::before{animation:none}}
