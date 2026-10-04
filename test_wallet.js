@@ -1,0 +1,13 @@
+const assert = require('assert');
+const fs = require('fs');
+const vm = require('vm');
+const html = fs.readFileSync('index.deployed.html', 'utf8');
+assert.match(html, /id="wallet-selector"/);
+const script = html.match(/<script data-wallet-module>([\s\S]*?)<\/script>/)[1];
+const buttons = [{dataset:{wallet:'phantom'}, disabled:false, addEventListener(type, fn){this.fn=fn;}}];
+const nodes = new Map();
+for (const id of ['wallet-selector','wallet-selector-close','wallet-chip','wallet-selector-message','wallet-chip-address','wallet-disconnect']) nodes.set(id, {hidden:id==='wallet-selector', textContent:'', classList:{toggle(){}}});
+const provider = {isPhantom:true, publicKey:{toString:()=> '11111111111111111111111111111111'}, connect:async()=>({publicKey:provider.publicKey}), on(){}};
+const context = {window:{phantom:{solana:provider}}, document:{getElementById:id=>nodes.get(id), querySelector:s=>nodes.get(s.slice(1))||null, querySelectorAll:()=>buttons, addEventListener(){}, body:{classList:{toggle(){}}}}, localStorage:{setItem(){},removeItem(){}}, console, setTimeout, Promise};
+vm.runInNewContext(script, context);
+(async()=>{ await nodes.get('wallet-chip').onclick(); assert.strictEqual(nodes.get('wallet-selector').hidden, false); await buttons[0].onclick(); assert.match(nodes.get('wallet-selector-message').textContent, /connected/i); })();
