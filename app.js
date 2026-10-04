@@ -2,7 +2,7 @@ import{animalIdenticonSvg}from"./animal-identicon.js";
 const API_BASE=location.hostname==="app.kelvara.xyz"?"https://api.kelvara.xyz":""; // Local hosts use the same-origin reverse proxy.
 function apiUrl(path){return `${API_BASE}${path}`}
 const $=selector=>document.querySelector(selector);let walletAddress=null,walletSource=null,activeProvider=null,evidence=null,evacuationDraft=null,protectionToken=null,protectionStatus=null,monitorTimer=null,countdownTimer=null,pendingTimer=null,seconds=60,inspectionEpoch=0;
-const stages=["boot","position","authority","monitor"];
+const stages=["position","authority","monitor"];
 function short(value){return value?`${value.slice(0,4)}…${value.slice(-4)}`:"—"}
 function format(value,digits=6){return new Intl.NumberFormat("en-US",{maximumFractionDigits:digits}).format(Number(value))}
 function toast(text){const el=$("#toast");el.textContent=text;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),2200)}

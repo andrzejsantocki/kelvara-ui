@@ -2,7 +2,14 @@ const assert=require('assert'),fs=require('fs'),vm=require('vm');
 const source=fs.readFileSync('app.js','utf8');
 const start=source.indexOf('async function consumeHandoff');
 const end=source.indexOf('\nasync function init',start);
+const consumeSource=source.slice(start,end);
 const consume=source.slice(start,end).replace(/^async function consumeHandoff/, 'async function consumeHandoff');
+const stageStart=source.indexOf('const stages=');
+const stageEnd=source.indexOf('\nasync function request',stageStart);
+const stageCode=source.slice(stageStart,stageEnd);
+const renderStart=source.indexOf('function renderPosition');
+const renderEnd=source.indexOf('\nfunction renderAuthority',renderStart);
+const renderCode=source.slice(renderStart,renderEnd);
 const key='11111111111111111111111111111111', evidence={position:{underlyingAmount:1},authority:{status:'ok'}};
 const store=initial=>({data:new Map(Object.entries(initial||{})),getItem(k){return this.data.get(k)||null},removeItem(k){this.data.delete(k)}});
 async function run({providerAt=0,publicAt=0,connectReject=false,mismatch=false}={}){
