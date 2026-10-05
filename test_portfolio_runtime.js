@@ -1,8 +1,15 @@
 const assert=require('assert'),fs=require('fs'),vm=require('vm');
-const html=fs.readFileSync('app.html','utf8'),src=fs.readFileSync('app.js','utf8');
-assert(html.includes('id="portfolio-positions"'),'portfolio positions container missing');
-assert(html.includes('id="portfolio-safeguards"'),'portfolio safeguards container missing');
-assert(src.includes('function renderPortfolio'),'portfolio renderer missing');
-assert(src.includes('/api/portfolio/'),'portfolio API missing');
-assert(src.includes('missing receipt'),'missing receipt must remain unknown');
-console.log('portfolio contract passed');
+const src=fs.readFileSync('app.js','utf8');
+function el(tag='div'){return {tagName:tag.toUpperCase(),children:[],dataset:{},textContent:'',innerHTML:'',className:'',hidden:false,disabled:false,attributes:{},classList:{hidden:false,add(c){this[c]=true},remove(c){this[c]=false},toggle(c,v){this[c]=v===undefined?!this[c]:v}},setAttribute(k,v){this.attributes[k]=v},appendChild(x){this.children.push(x);return x},append(...x){this.children.push(...x)},replaceChildren(...x){this.children=x},addEventListener(){}}}
+const ids=['portfolio-positions','position-list-status','overview-position','overview-balance','portfolio-protocol-status','portfolio-coverage','portfolio-safeguards','safeguards-summary','position-card','position-row','position-list','no-position'];
+const els=Object.fromEntries(ids.map(id=>[id,el()]));els['position-tabs']=el();
+const document={createElement:tag=>el(tag),querySelector(s){if(s==='.position-tabs')return els['position-tabs'];return s[0]==='#'?els[s.slice(1)]:null},querySelectorAll(s){if(s.includes('.position-row'))return els['portfolio-positions'].children;return []}};
+const ctx={document,$:s=>document.querySelector(s),setText:(s,v)=>{const x=document.querySelector(s);if(x)x.textContent=String(v)},renderOverview(){},format:v=>String(v),authorityAssessment(){return {label:'x'}},positionSearchPending(){return false},positionEmptyCopy(){return 'empty'},clearInterval(){},setInterval(){return 1},pendingTimer:null,protectionStatus:null,renderAuthority(){},toast(){},console};
+vm.runInNewContext(src.slice(src.indexOf('function renderPortfolio'),src.indexOf('function renderAuthority'))+';this.renderPortfolio=renderPortfolio;this.selectPortfolioPosition=selectPortfolioPosition;this.renderPortfolioSafeguards=renderPortfolioSafeguards',ctx);
+const portfolio={positions:[{targetId:'a',protocol:'Kamino',display:{name:'<img src=x>',amount:'10'}},{targetId:'b',protocol:'Generic',display:{name:'Second',amount:'20'}}],safeguards:[{targetId:'a',ruleId:'r1',result:'pass',reason:'receipt pending'}],protocolStatuses:[],coverage:{state:'partial'}};
+ctx.portfolioState=portfolio;ctx.renderPosition=()=>{};ctx.renderPortfolio(portfolio);
+assert.strictEqual(els['portfolio-positions'].children.length,2);assert.strictEqual(els['portfolio-positions'].children[0].attributes['aria-selected'],'false');assert.strictEqual(els['position-tabs'].classList.hidden,true,'tabs remain hidden before selection');
+assert.strictEqual(els['portfolio-safeguards'].children[0].textContent,'r1: unknown — receipt pending');
+assert.strictEqual(els['portfolio-coverage'].textContent,'Coverage partial: unknown/unknown satisfied');
+ctx.selectPortfolioPosition('b');assert.strictEqual(els['portfolio-positions'].children[1].attributes['aria-selected'],'true');assert.strictEqual(els['portfolio-positions'].children[0].attributes['aria-selected'],'false');
+console.log('portfolio runtime passed');assert.strictEqual(els['portfolio-positions'].children[0].children[0].textContent,'<img src=x>','API strings are text nodes');
