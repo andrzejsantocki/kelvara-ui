@@ -41,6 +41,20 @@ def test_kelvara_catalog_page_is_truthful_and_responsive():
     assert 'id="connect-wallet"' in HTML
 
 
+def test_landing_cta_is_a_distinct_accessible_primary_action():
+    import re
+    css = HTML.split('<style>', 1)[1].split('</style>', 1)[0]
+    assert '.button{' in css and 'background:#111' in css
+    assert 'min-height:44px' in css
+    assert 'border-radius:999px' in css
+    assert '.button:hover' in css and '.button:focus-visible' in css and '.button:active' in css
+    assert '.button:disabled' in css
+    assert 'transition:' in css
+    assert 'prefers-reduced-motion: reduce' in HTML
+    assert '@media(max-width:760px)' in HTML and '.button{width:100%' in HTML
+    assert '.wallet-chip' in css and '.button' in css
+
+
 def test_token_assets_are_local_images_with_provenance():
     for name in ('usdc.svg', 'usdt.svg', 'solana.svg'):
         path = ROOT / 'assets' / 'tokens' / name
