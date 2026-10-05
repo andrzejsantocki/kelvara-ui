@@ -3,7 +3,8 @@ const source=fs.readFileSync('app.js','utf8');
 const start=source.indexOf('async function consumeHandoff');
 const end=source.indexOf('\nasync function init',start);
 const consume=source.slice(start,end).replace(/^async function consumeHandoff/, 'async function consumeHandoff');
-const key='11111111111111111111111111111111', evidence={position:{underlyingAmount:1},authority:{status:'ok'}};
+const key='11111111111111111111111111111111', evidence={position:{name:'Kamino USDG',protocol:'Kamino',underlyingAmount:123.45,totalShares:99,stakedShares:60,unstakedShares:39},authority:{status:'ok'}};
+const html=fs.readFileSync('app.html','utf8'); for(const id of ['chip-address','wallet-state','wallet-full-address','wallet-connect-action','wallet-disconnect-action','workspace-wallet','overview-position','position-card','position-name','amount']) assert(html.includes(`id="${id}"`),`current app.html missing #${id}`);
 const store=initial=>({data:new Map(Object.entries(initial||{})),getItem(k){return this.data.get(k)||null},removeItem(k){this.data.delete(k)}});
 function dom(){const nodes={main:{classList:{remove(){}}}}; for(const id of ['chip-address','wallet-state','wallet-full-address','wallet-connect-action','wallet-clear-action','wallet-disconnect-action','wallet-avatar'])nodes[id]={textContent:'',classList:{remove(){},toggle(c,v){this.hidden=v}},setAttribute(){}}; return {querySelector(s){return nodes[s[0]==='#'?s.slice(1):s]},nodes}}
 async function run({providerAt=0,publicAt=0,connectReject=false,mismatch=false}={}){
@@ -14,7 +15,7 @@ async function run({providerAt=0,publicAt=0,connectReject=false,mismatch=false}=
   const result=await promise; return {result,sessionStorage,rendered,context,ui};
 }
 (async()=>{
- let r=await run(); assert.strictEqual(r.result,true); assert(r.rendered); assert(r.context.uiUpdated); assert.strictEqual(r.ui.nodes['chip-address'].textContent,'1111…1111'); assert.strictEqual(r.ui.nodes['wallet-state'].textContent,'Phantom connected'); assert.strictEqual(r.ui.nodes['wallet-full-address'].textContent,key); assert.strictEqual(r.ui.nodes['wallet-connect-action'].hidden,true); assert.strictEqual(r.ui.nodes['wallet-disconnect-action'].hidden,false);
+ let r=await run(); assert.strictEqual(r.result,true); assert(r.rendered); assert(r.context.uiUpdated); assert.strictEqual(r.ui.nodes['chip-address'].textContent,'1111…1111'); assert.strictEqual(r.ui.nodes['wallet-state'].textContent,'Phantom connected'); assert.strictEqual(r.ui.nodes['wallet-full-address'].textContent,key); assert.strictEqual(r.ui.nodes['wallet-connect-action'].hidden,true); assert.strictEqual(r.ui.nodes['wallet-disconnect-action'].hidden,false); assert.strictEqual(evidence.position.name,'Kamino USDG'); assert.strictEqual(evidence.position.underlyingAmount,123.45);
  r=await run({providerAt:120}); assert.strictEqual(r.result,true); assert.strictEqual(r.sessionStorage.getItem('kelvara_handoff'),null);
  r=await run({publicAt:120}); assert.strictEqual(r.result,true);
  r=await run({mismatch:true}); assert.strictEqual(r.result,false); assert.strictEqual(r.sessionStorage.getItem('kelvara_handoff'),null);
