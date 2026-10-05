@@ -1,0 +1,11 @@
+const assert=require('assert'),fs=require('fs'),vm=require('vm');
+const html=fs.readFileSync('app.html','utf8'),source=fs.readFileSync('app.js','utf8');
+const ids=new Set([...html.matchAll(/id="([^"]+)"/g)].map(m=>m[1]));
+assert(ids.size>0,'app.html IDs');
+const node=()=>({classList:{add(){},remove(){},toggle(){}},style:{setProperty(){}},dataset:{},children:[],value:'',checked:false,disabled:false,textContent:'',innerHTML:'',onclick:null,onchange:null,onkeydown:null,addEventListener(){},setAttribute(){},replaceChildren(){},closest(){return this},getBoundingClientRect(){return {left:0,top:0,width:1,height:1}}});
+const nodes=new Map([...ids].map(id=>[id,node()]));
+const all=()=>[]; const document={querySelector(selector){if(selector.startsWith('#'))return nodes.get(selector.slice(1))||null;return node()},querySelectorAll:all,createElement:node,addEventListener(){}};
+const context={document,window:{addEventListener(){},scrollTo(){},location:{hostname:'localhost',hash:'',replace(){}}},location:document.location||{hostname:'localhost',hash:'',replace(){}},localStorage:{getItem(){return null},setItem(){},removeItem(){}},sessionStorage:{getItem(){return null},removeItem(){}},fetch:async()=>({ok:true,json:async()=>({})}),setTimeout,clearTimeout,setInterval,clearInterval,Promise,URLSearchParams,Intl,DOMParser:class{},TextEncoder,atob:()=>'',btoa:()=>'',matchMedia:()=>({matches:false}),console,animalIdenticonSvg:()=>''};
+let code=source.replace(/^import[^;]+;\n/,'').replace(/\ninit\(\);\s*$/,'');
+assert.doesNotThrow(()=>vm.runInNewContext(code,context,{filename:'app.js'}),'full app.js module evaluation');
+console.log(`full app module runtime passed: ${ids.size} HTML IDs exercised`);
