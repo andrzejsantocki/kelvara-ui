@@ -6,7 +6,7 @@ const appJs = fs.readFileSync('app.js','utf8');
 const css = landing.match(/<style>([\s\S]*?)<\/style>/)[1];
 assert.match(css, /\.scope::before[\s\S]*radial-gradient\(circle/);
 assert.doesNotMatch(landing, /<link[^>]+styles\.css/);
-assert.match(app, /id="stage-position"/);
+assert.match(app, /id="pane-positions"/);
 assert.match(app, /<link rel="stylesheet" href="\/styles\.css/);
 assert.match(app, /<script[^>]+src="\/app\.js"/);
 assert.doesNotMatch(app, /stage-boot|SECURE SESSION|Verifying/);

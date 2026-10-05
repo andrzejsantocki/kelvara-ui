@@ -1,10 +1,8 @@
-const fs=require('fs');
-const assert=require('assert');
-const html=fs.readFileSync('app.html','utf8');
-const js=fs.readFileSync('app.js','utf8');
-const css=fs.readFileSync('styles.css','utf8');
-function testShell(){for(const label of ['Overview','Positions','Safeguards','Protection','Account'])assert(html.includes(`>${label}<`),`missing ${label}`);assert(html.includes('connected-workspace'));assert(html.includes('workspace-nav'));}
-function testRoutes(){for(const route of ['#overview','#positions','#safeguards','#protection','#account'])assert(js.includes(route)||html.includes(route),`missing ${route}`);assert(js.includes('hashchange'));}
-function testTruthfulCopy(){assert(!html.includes('Fast evacuation is not armed'));assert(!html.includes('Prepare protection transaction'));assert(js.includes('Exit protection is not prepared'));}
-function testResponsive(){assert(css.includes('.workspace-nav'));assert(css.includes('@media(max-width:720px)'));assert(css.includes('workspace-drawer'));}
-testShell();testRoutes();testTruthfulCopy();testResponsive();console.log('connected app contract: 4 passed');
+const fs=require('fs');const assert=require('assert');
+const html=fs.readFileSync('app.html','utf8'),js=fs.readFileSync('app.js','utf8'),css=fs.readFileSync('styles.css','utf8');
+for(const marker of ['stage-position','stage-authority','stage-monitor','Preview monitoring','MONITOR','Evacuation review','Simulate evacuation','Sign and evacuate','Healthy','Evidence current','1 detected','Just now','2 / 2']){assert(!html.includes(marker),`legacy marker: ${marker}`);}
+for(const route of ['#overview','#positions','#safeguards','#protection','#account'])assert(html.includes(`href="${route}"`),`missing ${route}`);
+for(const pane of ['pane-overview','pane-positions','pane-safeguards','pane-protection','pane-account'])assert(html.includes(`id="${pane}"`),`missing ${pane}`);
+assert(html.includes('aria-label="Workspace"'));assert(html.includes('data-position-tab="overview"'));assert(html.includes('data-position-tab="safeguards"'));assert(html.includes('data-position-tab="activity"'));assert(html.includes('data-position-tab="protection"'));
+assert(html.includes('Unknown'));assert(html.includes('Not loaded'));assert(css.includes('@media(max-width:720px)')||css.includes('@media (max-width: 720px)'));
+assert(js.includes('hashchange'));assert(js.includes('data-position-tab'));console.log('connected app contract: passed');
