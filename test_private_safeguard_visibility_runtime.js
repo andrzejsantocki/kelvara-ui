@@ -9,7 +9,7 @@ const publicWire={walletId:'owner',positions:[{targetId:'vault-1',safeguards:glo
 renderWalletSafeguardProjection({document:doc,walletAddress:'owner',portfolio:publicWire});
 assert.equal(elements['private-safeguard-review'].hidden,true,'public projection hides private review');
 assert.equal(elements['private-safeguard-state'].textContent,'','public projection has no private state');
-const ownerPrivate={...globals[0],bindingId:'private',visibility:'private',result:'unknown',reason:'missing_receipt'};
+const ownerPrivate={...globals[0],bindingId:'private',scope:'owner-private',result:'unknown',reason:'missing_receipt'};
 const ownerWire={walletId:'owner',positions:[{targetId:'vault-1',safeguards:[globals[0],ownerPrivate]}],safeguards:[globals[0],ownerPrivate]};
 renderWalletSafeguardProjection({document:doc,walletAddress:'owner',portfolio:ownerWire});
 assert.equal(elements['private-safeguard-review'].hidden,false,'owner sees authoritative private review');

@@ -11,7 +11,7 @@ assert.equal(draft.state,'setup_incomplete');
 assert.equal(api.buildWalletSafeguardReview({...base,authorizedBps:4200}).authorizedBps,4200,'lower cap retained');
 assert.equal(api.buildWalletSafeguardReview({...base,authorizedBps:0}).state,'invalid','zero cap rejected');
 const global={targetId:base.targetId,ruleId:'global-nav',result:'unknown'};
-const privateItem={targetId:base.targetId,bindingId:'private',ruleId:'owner-policy',visibility:'private',result:'unknown',reason:'missing_receipt'};
+const privateItem={targetId:base.targetId,bindingId:'private',ruleId:'owner-policy',scope:'owner-private',result:'unknown',reason:'missing_receipt'};
 const privateProjection=api.projectWalletSafeguards({walletId:'owner',positions:[{...base,safeguards:[global,privateItem]}]});
 assert.equal(privateProjection.length,2,'global plus owner-private safeguard');
 assert(privateProjection.some(x=>x.visibility==='global'));
