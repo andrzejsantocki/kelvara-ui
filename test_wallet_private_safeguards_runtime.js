@@ -1,0 +1,27 @@
+const assert=require('assert'),fs=require('fs'),vm=require('vm');
+const html=fs.readFileSync('app.html','utf8'),src=fs.readFileSync('app.js','utf8');
+function load(names){const ctx={};vm.runInNewContext(`${src.slice(src.indexOf('function setText'),src.indexOf('async function inspect'))};this.api={${names.map(n=>`${n}:${n}`).join(',')}}`,ctx);return ctx.api}
+const api=load(['buildWalletSafeguardReview','projectWalletSafeguards','renderPrivateSafeguardCopy']);
+const base={targetId:'kamino-mainnet:11111111111111111111111111111111',display:{name:'Vault <A>'}};
+const draft=api.buildWalletSafeguardReview(base);
+assert.equal(draft.authorizedBps,10000,'default authorization is 100%');
+assert.deepEqual(new Set(draft.conditions.map(x=>x.type)),new Set(['apy_drop','authority_change','nav_loss','oracle_staleness']),'all four conditions are reviewed');
+assert.equal(draft.combineMode,'OR');
+assert.equal(draft.state,'setup_incomplete');
+assert.equal(api.buildWalletSafeguardReview({...base,authorizedBps:4200}).authorizedBps,4200,'lower cap retained');
+assert.equal(api.buildWalletSafeguardReview({...base,authorizedBps:0}).state,'invalid','zero cap rejected');
+const globals=[{targetId:base.targetId,ruleId:'global-nav',result:'unknown'}];
+const owner={walletId:'owner',enrollments:[{targetId:base.targetId,state:'armed',permit:{validated:true,storageAttestation:{verified:true}}}]};
+const privateProjection=api.projectWalletSafeguards({walletId:'owner',positions:[base],safeguards:globals},owner);
+assert.equal(privateProjection.length,2,'global plus owner-private safeguard');
+assert(privateProjection.some(x=>x.visibility==='global'));
+assert(privateProjection.some(x=>x.visibility==='private'&&x.state==='armed'));
+assert.equal(api.projectWalletSafeguards({walletId:'other',positions:[base],safeguards:globals},owner).length,1,'wrong owner gets globals only');
+assert.equal(api.projectWalletSafeguards({walletId:'owner',positions:[base],safeguards:globals},{walletId:'owner',enrollments:[{targetId:base.targetId,state:'armed',permit:{validated:true}}]}).length,1,'missing storage attestation hides private state');
+assert(!JSON.stringify(privateProjection).includes('signedTransaction'));
+assert(!api.renderPrivateSafeguardCopy({state:'unknown'}).includes('armed'));
+assert(html.includes('private-safeguard-review'),'review UI exists');
+assert(html.includes('safeguard-cap'));
+assert(html.includes('safeguard-condition-nav-loss')&&html.includes('safeguard-condition-apy-drop')&&html.includes('safeguard-condition-oracle-staleness')&&html.includes('safeguard-condition-authority-change'));
+assert(!/signedTransaction|signedBytes|rawSignature/.test(JSON.stringify(privateProjection)),'private projection excludes raw signed bytes');
+console.log('wallet private safeguards runtime passed');
