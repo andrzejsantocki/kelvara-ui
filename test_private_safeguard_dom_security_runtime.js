@@ -3,7 +3,7 @@ const html=fs.readFileSync('app.html','utf8'),js=fs.readFileSync('app.js','utf8'
 const ids=[...html.matchAll(/\bid=["']([^"']+)["']/g)].map(m=>m[1]);assert.equal(new Set(ids).size,ids.length,'DOM IDs unique');
 for(const id of ['private-safeguard-review','safeguard-cap','safeguard-cap-output','safeguard-condition-nav-loss','safeguard-condition-apy-drop','safeguard-condition-oracle-staleness','safeguard-condition-authority-change'])assert(ids.includes(id),`missing ${id}`);
 assert(/class="safeguard hidden"/.test(html),'private review hidden by default');
-assert(/combineMode:'OR'/.test(js)&&/Unknown evidence fails closed/.test(js),'OR and fail-closed semantics present');
+assert(/combineMode:'OR'/.test(js)&&/Evidence unavailable fails closed/.test(js),'OR and fail-closed semantics present');
 assert(/encrypted durable storage attestation/.test(html+js),'attestation requirement disclosed');
 const privateCode=js.slice(js.indexOf('function renderPrivateSafeguardCopy'),js.indexOf('function renderPortfolioSafeguards'));assert(!/innerHTML/.test(privateCode),'private copy avoids unsafe HTML');
 assert(/overflow-x:auto/.test(css),'mobile horizontal overflow constrained');
