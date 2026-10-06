@@ -1,0 +1,17 @@
+const assert=require('assert'),fs=require('fs'),vm=require('vm');
+const src=fs.readFileSync('app.js','utf8');
+const ctx={};vm.runInNewContext(`${src.slice(src.indexOf('function setText'),src.indexOf('async function inspect'))};this.api={renderWalletSafeguardProjection}`,ctx);
+const {renderWalletSafeguardProjection}=ctx.api;
+const ids=[];const elements={};for(const id of ['private-safeguard-review','private-safeguard-state','safeguard-cap','safeguard-cap-output'])elements[id]={id,textContent:'',value:'10000',hidden:true,classList:{toggle(c,v){this[c]=v}},addEventListener(type,fn){this[type]=fn}};
+const q=s=>elements[s.slice(1)];const doc={querySelector:q};
+const globals=[{targetId:'vault-1',ruleId:'global',result:'unknown'}];
+renderWalletSafeguardProjection({document:doc,walletAddress:'owner',portfolio:{walletId:'owner',safeguards:globals},ownerProjection:null});
+assert.equal(elements['private-safeguard-review'].hidden,true,'public projection hides private review');
+assert.equal(elements['private-safeguard-state'].textContent,'','public projection has no private state');
+renderWalletSafeguardProjection({document:doc,walletAddress:'owner',portfolio:{walletId:'owner',safeguards:globals},ownerProjection:{walletId:'owner',enrollments:[{targetId:'vault-1',state:'setup_incomplete'}]}});
+assert.equal(elements['private-safeguard-review'].hidden,false,'owner sees review');
+assert(/setup-incomplete/i.test(elements['private-safeguard-state'].textContent),'owner sees setup incomplete');
+assert.equal(elements['safeguard-cap'].value,'10000','default cap remains 100%');
+renderWalletSafeguardProjection({document:doc,walletAddress:'other',portfolio:{walletId:'owner',safeguards:globals},ownerProjection:{walletId:'owner',enrollments:[{targetId:'vault-1',state:'armed'}]}});
+assert.equal(elements['private-safeguard-review'].hidden,true,'wrong owner hides private review');
+console.log('private safeguard visibility runtime passed');
