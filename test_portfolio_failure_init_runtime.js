@@ -1,0 +1,26 @@
+const assert=require('assert'),fs=require('fs'),vm=require('vm');
+const source=fs.readFileSync('app.js','utf8');
+const html=fs.readFileSync('app.html','utf8');
+const ids=[...html.matchAll(/id="([^"]+)"/g)].map(match=>match[1]);
+function node(){return {classList:{add(){},remove(){},toggle(){}},dataset:{},children:[],textContent:'',innerHTML:'',value:'',disabled:false,style:{setProperty(){}},append(){},appendChild(){},replaceChildren(){},setAttribute(){},addEventListener(){},closest(){return this},getBoundingClientRect(){return {left:0,top:0,width:1,height:1}}};}
+const nodes=new Map(ids.map(id=>[id,node()]));
+const document={body:node(),querySelector(selector){if(selector==='.position-tabs')return node();if(selector.startsWith('#'))return nodes.get(selector.slice(1))||node();return node()},querySelectorAll(){return[]},createElement:node,addEventListener(){}};
+const wallet={isConnected:true,publicKey:{toString:()=> '7sXHKv8RJG4ENmiDSpBEgiEnktJXPaVEmq2a8QBsvEgJ'},async connect(){return {publicKey:this.publicKey}}};
+const session={getItem(key){return key==='kelvara_app_session'?JSON.stringify({wallet:wallet.publicKey.toString(),source:'phantom',token:'session-token'}):null},removeItem(){},setItem(){}};
+const calls=[];
+const fetch=async url=>{calls.push(url);if(url.includes('/api/portfolio/'))return {ok:false,status:502,text:async()=>JSON.stringify({error:'observation_hub_unavailable'})};if(url.includes('/healthz'))return {ok:true,text:async()=>JSON.stringify({ok:true})};if(url.includes('/api/protection/status'))return {ok:true,text:async()=>JSON.stringify({armed:false})};throw new Error(`unexpected ${url}`)};
+const context={document,window:{addEventListener(){},scrollTo(){},location:{hostname:'localhost',hash:'',replace(){}},phantom:{solana:wallet}},location:document.location||{hostname:'localhost',hash:'',replace(){}},localStorage:{getItem(){return null},setItem(){},removeItem(){}},sessionStorage:session,fetch,setTimeout,clearTimeout,setInterval,clearInterval,Promise,URLSearchParams,Intl,DOMParser:class{},TextEncoder,atob:()=>'',btoa:()=>'',matchMedia:()=>({matches:false}),console,animalIdenticonSvg:()=>''};
+const code=source.replace(/^import[^;]+;\n/,'').replace(/\ninit\(\);\s*$/,'\nthis.runInit=init;');
+vm.runInNewContext(code,context,{filename:'app.js'});
+(async()=>{await context.runInit();
+ assert.strictEqual(calls.some(url=>url.includes('/api/portfolio/')),true,'canonical portfolio request');
+ assert.match(nodes.get('message').textContent,/Portfolio unavailable.*observation_hub_unavailable/);
+ assert.strictEqual(nodes.get('overview-heading').textContent,'Portfolio unavailable');
+ assert.strictEqual(nodes.get('overview-position').textContent,'Unavailable');
+ assert.strictEqual(nodes.get('overview-balance').textContent,'Unavailable');
+ assert.strictEqual(nodes.get('position-list-status').textContent,'Portfolio unavailable — no positions loaded');
+ assert.strictEqual(nodes.get('no-position').textContent,'Portfolio unavailable. Retry when observation service recovers.');
+ assert.strictEqual(nodes.get('safeguards-summary').textContent,'Safeguards unavailable — canonical portfolio observation failed');
+ assert.match(nodes.get('portfolio-coverage').textContent,/canonical portfolio observation failed/);
+ console.log('portfolio failure init runtime passed');
+})().catch(error=>{console.error(error);process.exitCode=1});
