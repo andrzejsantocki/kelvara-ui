@@ -1,8 +1,10 @@
 const assert = require('assert');
 const fs = require('fs');
 const vm = require('vm');
-const html = fs.readFileSync('index.deployed.html', 'utf8');
-const script = html.match(/<script data-wallet-module>([\s\S]*?)<\/script>/)[1];
+const html = fs.readFileSync('index.html', 'utf8');
+const scriptMatch = html.match(/<script data-wallet-module>([\s\S]*?)<\/script>/);
+assert.ok(scriptMatch, 'production entrypoint must contain wallet module');
+const script = scriptMatch[1];
 const makeStore = () => ({removeItem(){}, setItem(){}});
 const nodes = new Map();
 for (const id of ['wallet-selector','wallet-selector-message','wallet-chip','wallet-chip-address','wallet-disconnect','wallet-selector-close']) nodes.set(id,{hidden:id==='wallet-selector',textContent:'',classList:{toggle(){}}});
@@ -18,6 +20,7 @@ const context = {
 };
 vm.runInNewContext(script, context);
 (async()=>{ await nodes.get('wallet-chip').onclick(); await buttons[0].onclick(); await new Promise(r=>setImmediate(r));
-  assert.ok(calls.length === 0 || calls.every(url=>String(url).startsWith('https://api.kelvara.xyz/')), 'WebKit/Solflare repro: relative API URL causes exact DOMException');
-  console.log('Solflare WebKit URL regression passed');
+  assert.ok(calls.length > 0, 'Solflare flow must call the API');
+  assert.ok(calls.every(url=>String(url).startsWith('https://api.kelvara.xyz/')), 'WebKit/Solflare repro: relative API URL causes exact DOMException');
+  console.log('Solflare WebKit URL regression passed against index.html');
 })().catch(error=>{console.error(error);process.exitCode=1});
