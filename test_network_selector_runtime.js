@@ -1,0 +1,14 @@
+const assert=require("assert"),fs=require("fs");
+const index=fs.readFileSync("index.html","utf8"),app=fs.readFileSync("app.html","utf8"),js=fs.readFileSync("app.js","utf8");
+assert(index.includes("id=\"network-selector\""),"public shell must expose a network selector");
+assert(index.includes("data-network=\"mainnet-beta\""),"Mainnet choice missing");
+assert(index.includes("data-network=\"devnet\""),"Devnet choice missing");
+assert(index.includes("kelvara_network_context"),"bounded network context key missing");
+assert(index.includes("Connect a wallet only after selecting a network"),"wallet gate copy missing");
+assert(js.includes("kelvara_network_context"),"connected app must read the network context");
+assert(js.includes("network-context-label")||app.includes("network-context-label"),"persistent connected realm label missing");
+assert(js.includes("devnet_unavailable"),"Devnet must fail closed before provider/API work");
+assert(js.includes("network: network")||js.includes("network:CURRENT_NETWORK"),"app session must carry selected network");
+assert(index.includes("network: network")||index.includes("network,"),"handoff must carry selected network");
+assert(js.includes("kelvara_prod_monitor_wallet"),"monitor state must be cleared on network switch");
+console.log("network selector browser journey contract passed");
