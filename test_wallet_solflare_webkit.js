@@ -5,16 +5,17 @@ const html = fs.readFileSync('index.html', 'utf8');
 const scriptMatch = html.match(/<script data-wallet-module>([\s\S]*?)<\/script>/);
 assert.ok(scriptMatch, 'production entrypoint must contain wallet module');
 const script = scriptMatch[1];
-const makeStore = () => ({removeItem(){}, setItem(){}});
+const makeStore = (initial={}) => ({...initial,getItem(key){return this[key]??null},removeItem(key){delete this[key]}, setItem(key,value){this[key]=String(value)}});
 const nodes = new Map();
-for (const id of ['wallet-selector','wallet-selector-message','wallet-chip','wallet-chip-address','wallet-disconnect','wallet-selector-close']) nodes.set(id,{hidden:id==='wallet-selector',textContent:'',classList:{toggle(){}}});
+for (const id of ['wallet-selector','network-selector','network-selector-status','network-context-label','realm-label','wallet-selector-message','wallet-chip','wallet-chip-address','wallet-disconnect','wallet-selector-close']) nodes.set(id,{hidden:id==='wallet-selector',textContent:'',classList:{toggle(){}}});
+nodes.get('network-selector').querySelectorAll=()=>[];
 const key = '11111111111111111111111111111111';
 const provider = {isSolflare:true,isConnected:true,publicKey:{toString:()=>key},connect:async()=>({publicKey:provider.publicKey}),signMessage:async()=>({signature:new Uint8Array([1,2,3])}),on(){}};
 const calls = [];
 const buttons = [{dataset:{wallet:'solflare'},addEventListener(type,fn){this.onclick=fn;}}];
 const context = {
   window:{solflare:provider}, document:{getElementById:id=>nodes.get(id),querySelector:s=>nodes.get(s.slice(1))||null,querySelectorAll:()=>buttons,addEventListener(){}},
-  sessionStorage:makeStore(), localStorage:makeStore(), location:{hostname:'app.kelvara.xyz',replace(){}},
+  sessionStorage:makeStore({kelvara_network_context:'mainnet-beta'}), localStorage:makeStore(), location:{hostname:'app.kelvara.xyz',replace(){}},
   fetch:async(url)=>{calls.push(url); if (!String(url).startsWith('https://api.kelvara.xyz/')) throw new DOMException('The string did not match the expected pattern'); return {ok:true,json:async()=>url.endsWith('/challenge')?{message:'challenge'}:url.endsWith('/verify')?{token:'token'}:{position:{underlyingAmount:1}}};},
   console, setTimeout, Promise, TextEncoder, btoa:s=>Buffer.from(s,'binary').toString('base64'), DOMException
 };

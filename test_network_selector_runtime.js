@@ -1,14 +1,27 @@
-const assert=require("assert"),fs=require("fs");
-const index=fs.readFileSync("index.html","utf8"),app=fs.readFileSync("app.html","utf8"),js=fs.readFileSync("app.js","utf8");
-assert(index.includes("id=\"network-selector\""),"public shell must expose a network selector");
-assert(index.includes("data-network=\"mainnet-beta\""),"Mainnet choice missing");
-assert(index.includes("data-network=\"devnet\""),"Devnet choice missing");
-assert(index.includes("kelvara_network_context"),"bounded network context key missing");
-assert(index.includes("Connect a wallet only after selecting a network"),"wallet gate copy missing");
-assert(js.includes("kelvara_network_context"),"connected app must read the network context");
-assert(js.includes("network-context-label")||app.includes("network-context-label"),"persistent connected realm label missing");
-assert(js.includes("devnet_unavailable"),"Devnet must fail closed before provider/API work");
-assert(js.includes("network: network")||js.includes("network:CURRENT_NETWORK"),"app session must carry selected network");
-assert(index.includes("network: network")||index.includes("network,"),"handoff must carry selected network");
-assert(js.includes("kelvara_prod_monitor_wallet"),"monitor state must be cleared on network switch");
-console.log("network selector browser journey contract passed");
+const assert=require('assert'),fs=require('fs'),vm=require('vm');
+const index=fs.readFileSync('index.html','utf8'),app=fs.readFileSync('app.html','utf8'),source=fs.readFileSync('app.js','utf8');
+assert(index.includes('id="network-selector"'));
+const inline=index.match(/<script data-wallet-module>([\s\S]*?)<\/script>/)[1];
+function el(id='',attrs={}){return {id,textContent:'',hidden:false,onclick:null,dataset:{},classList:{toggle(){}},...attrs}}
+function shell(initial,provider){
+ const nodes={};['network-selector','wallet-selector','wallet-selector-message','wallet-selector-status','network-selector-status','wallet-chip','wallet-chip-address','wallet-disconnect','wallet-selector-close','realm-label'].forEach(id=>nodes[id]=el(id));
+ const networkButtons=['mainnet-beta','devnet'].map(network=>el('',{dataset:{network}}));nodes['network-selector'].querySelectorAll=()=>networkButtons;
+ nodes['wallet-selector'].querySelectorAll=()=>[]; const calls=[]; const ss={...initial},ls={};
+ const document={querySelector(s){return s.startsWith('#')?nodes[s.slice(1)]:null},querySelectorAll(s){return s==='[data-wallet]'?[]:[]},addEventListener(){}};
+ const context={document,window:{phantom:{solana:provider}},sessionStorage:{getItem:k=>ss[k]??null,setItem:(k,v)=>ss[k]=String(v),removeItem:k=>delete ss[k]},localStorage:{removeItem:k=>delete ls[k]},fetch:async(...args)=>{calls.push(args);return {ok:true,json:async()=>({})}},TextEncoder,location:{},btoa:s=>Buffer.from(s,'binary').toString('base64')};
+ vm.runInNewContext(inline,context);return {context,nodes,ss,ls,calls};
+}
+(async()=>{
+ let connects=0;const provider={async connect(){connects++},isConnected:true,publicKey:{toString:()=> 'wallet'},async signMessage(){return Uint8Array.of(1)}};
+ let h=shell({kelvara_network_context:'invalid'},provider);assert.strictEqual(h.nodes['network-selector'].hidden,false);assert.strictEqual(connects,0);assert.strictEqual(h.calls.length,0);
+ h=shell({kelvara_handoff:'x',kelvara_app_session:'x',kelvara_auth_token:'x'},provider);h.nodes['network-selector'].querySelectorAll()[0].onclick();for(const key of ['kelvara_handoff','kelvara_app_session','kelvara_auth_token'])assert(!(key in h.ss));
+ h=shell({},provider);h.nodes['network-selector']=null;h.nodes['wallet-selector'].hidden=false;assert(!inline.includes("network='mainnet-beta'"),'missing selector must not infer Mainnet');assert.strictEqual(h.calls.length,0);
+ h=shell({},provider);h.nodes['network-selector'].querySelectorAll()[0].onclick();assert.strictEqual(h.ss.kelvara_network_context,'mainnet-beta');assert.strictEqual(h.nodes['realm-label'].textContent,'Mainnet');assert.strictEqual(h.nodes['network-selector'].hidden,true);
+ h=shell({},provider);h.nodes['network-selector'].querySelectorAll()[1].onclick();assert.strictEqual(h.ss.kelvara_network_context,'devnet');assert.strictEqual(h.nodes['realm-label'].textContent,'Devnet (selected but unavailable)');assert.strictEqual(h.nodes['network-selector'].hidden,false);assert.strictEqual(h.calls.length,0);assert.strictEqual(connects,0);
+ h=shell({kelvara_network_context:'mainnet-beta',kelvara_handoff:'x',kelvara_app_session:'x',kelvara_auth_token:'x'},provider);h.ls.kelvara_prod_monitor_wallet='wallet';h.nodes['network-selector'].querySelectorAll()[1].onclick();for(const key of ['kelvara_handoff','kelvara_app_session','kelvara_auth_token'])assert(!(key in h.ss));assert(!('kelvara_prod_monitor_wallet' in h.ls));
+ const ids=[...app.matchAll(/id="([^"]+)"/g)].map(m=>m[1]);function node(){return {textContent:'',innerHTML:'',className:'',hidden:false,classList:{add(){},remove(){},toggle(){}},setAttribute(){},replaceChildren(){},appendChild(){},addEventListener(){},style:{},getBoundingClientRect(){return {left:0,top:0,width:1,height:1}}}}
+ async function appBoot(session,selected){const els=Object.fromEntries(ids.map(id=>[id,node()])),calls=[],p={connectCalls:0,isConnected:true,publicKey:{toString:()=> 'wallet'},async connect(){this.connectCalls++;return {publicKey:this.publicKey}}};const doc={querySelector(s){if(s.startsWith('#'))return els[s.slice(1)]||node();return node()},querySelectorAll(){return []},createElement:node,addEventListener(){}};const loc={hash:'',replace(url){calls.push(['redirect',url])}};const ctx={normalizeNetwork:v=>v==='mainnet-beta'||v==='devnet'?v:null,document:doc,window:{phantom:{solana:p},addEventListener(){},scrollTo(){}},location:loc,sessionStorage:{getItem:k=>session[k]??null,setItem(k,v){session[k]=String(v)},removeItem(k){delete session[k]}},localStorage:{removeItem(){}},fetch:async(...a)=>{calls.push(a);return {ok:true,text:async()=>JSON.stringify({}),json:async()=>({})}},setTimeout,clearTimeout,setInterval:()=>1,clearInterval,Promise,URLSearchParams,Intl,DOMParser:class{},TextEncoder,atob:()=>'',btoa:()=>'',matchMedia:()=>({matches:false}),console,animalIdenticonSvg:()=>'',setText:(s,v)=>{}};session.kelvara_network_context=selected;const code=source.replace(/^import[^\n]*\n/gm,'').replace(/\ninit\(\);\s*$/,'')+'\nthis.boot=init;';vm.runInNewContext(code,ctx);await ctx.boot();return {calls,p}}
+ let b=await appBoot({},'invalid');assert.strictEqual(b.calls.length,1);assert.strictEqual(b.p.connectCalls,0);
+ b=await appBoot({kelvara_network_context:'mainnet-beta',kelvara_app_session:JSON.stringify({wallet:'wallet',source:'phantom',token:'t',network:'devnet'})},'mainnet-beta');assert.strictEqual(b.p.connectCalls,0);assert.strictEqual(b.calls.length,1);
+ console.log('network selector dynamic browser journeys passed');
+})().catch(e=>{console.error(e);process.exitCode=1});
