@@ -4,6 +4,13 @@ ROOT = Path(__file__).parent
 HTML = (ROOT / 'index.deployed.html').read_text()
 
 
+def test_pages_custom_domain_routes_the_production_app():
+    assert (ROOT / 'CNAME').read_text().strip() == 'app.kelvara.xyz'
+    app = (ROOT / 'index.html').read_text()
+    assert 'https://api.kelvara.xyz' in app
+    assert 'const apiUrl=path=>`https://api.kelvara.xyz${path}`' in app
+
+
 def test_kelvara_catalog_page_is_truthful_and_responsive():
     required = [
         'DEFI POSITION MONITORING', 'Know what changed before your capital is at risk.',
