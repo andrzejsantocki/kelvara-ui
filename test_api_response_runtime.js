@@ -3,7 +3,7 @@ const source=fs.readFileSync('app.js','utf8');
 const node={textContent:'',classList:{toggle(){},add(){},remove(){}},setAttribute(){},addEventListener(){},closest(){return null}};
 const calls=[];
 const context={location:{hostname:'localhost',hash:''},document:{querySelector(){return node},querySelectorAll(){return []},addEventListener(){}},window:{addEventListener(){},scrollTo(){}},matchMedia:()=>({matches:false}),fetch:async(url,options)=>{calls.push([url,options]);return {ok:false,status:502,headers:{get:()=> 'text/html'},text:async()=>'<html><h1>502</h1></html>'}},Promise,console};
-const code=source.replace(/^import[^;]+;\n/,'').replace(/\ninit\(\);\s*$/,'')+'\nthis.apiRequest=request;this.apiPost=post;this.apiProtectionRequest=protectionRequest;this.setProtectionToken=value=>protectionToken=value;';
+const code=source.replace(/^import[^\n]*\n/gm,'').replace(/\ninit\(\);\s*$/,'')+'\nthis.apiRequest=request;this.apiPost=post;this.apiProtectionRequest=protectionRequest;this.setProtectionToken=value=>protectionToken=value;';
 vm.runInNewContext(code,context,{filename:'app.js'});
 context.setProtectionToken('handoff-token');
 (async()=>{

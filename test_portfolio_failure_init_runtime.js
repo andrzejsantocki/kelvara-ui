@@ -6,11 +6,11 @@ function node(){return {classList:{add(){},remove(){},toggle(){}},dataset:{},chi
 const nodes=new Map(ids.map(id=>[id,node()]));
 const document={body:node(),querySelector(selector){if(selector==='.position-tabs')return node();if(selector.startsWith('#'))return nodes.get(selector.slice(1))||node();return node()},querySelectorAll(){return[]},createElement:node,addEventListener(){}};
 const wallet={isConnected:true,publicKey:{toString:()=> '7sXHKv8RJG4ENmiDSpBEgiEnktJXPaVEmq2a8QBsvEgJ'},async connect(){return {publicKey:this.publicKey}}};
-const session={getItem(key){return key==='kelvara_app_session'?JSON.stringify({wallet:wallet.publicKey.toString(),source:'phantom',token:'session-token'}):null},removeItem(){},setItem(){}};
+const session={getItem(key){return key==='kelvara_app_session'?JSON.stringify({wallet:wallet.publicKey.toString(),source:'phantom',token:'session-token',network:'mainnet-beta'}):null},removeItem(){},setItem(){}};
 const calls=[];
 const fetch=async url=>{calls.push(url);if(url.includes('/api/portfolio/'))return {ok:false,status:502,text:async()=>JSON.stringify({error:'observation_hub_unavailable'})};if(url.includes('/healthz'))return {ok:true,text:async()=>JSON.stringify({ok:true})};if(url.includes('/api/protection/status'))return {ok:true,text:async()=>JSON.stringify({armed:false})};throw new Error(`unexpected ${url}`)};
-const context={document,window:{addEventListener(){},scrollTo(){},location:{hostname:'localhost',hash:'',replace(){}},phantom:{solana:wallet}},location:document.location||{hostname:'localhost',hash:'',replace(){}},localStorage:{getItem(){return null},setItem(){},removeItem(){}},sessionStorage:session,fetch,setTimeout,clearTimeout,setInterval,clearInterval,Promise,URLSearchParams,Intl,DOMParser:class{},TextEncoder,atob:()=>'',btoa:()=>'',matchMedia:()=>({matches:false}),console,animalIdenticonSvg:()=>''};
-const code=source.replace(/^import[^;]+;\n/,'').replace(/\ninit\(\);\s*$/,'\nthis.runInit=init;');
+const context={normalizeNetwork(value){return value==='mainnet-beta'||value==='devnet'?value:null},document,window:{addEventListener(){},scrollTo(){},location:{hostname:'localhost',hash:'',replace(){}},phantom:{solana:wallet}},location:document.location||{hostname:'localhost',hash:'',replace(){}},localStorage:{getItem(){return null},setItem(){},removeItem(){}},sessionStorage:session,fetch,setTimeout,clearTimeout,setInterval,clearInterval,Promise,URLSearchParams,Intl,DOMParser:class{},TextEncoder,atob:()=>'',btoa:()=>'',matchMedia:()=>({matches:false}),console,animalIdenticonSvg:()=>''};
+const code=source.replace(/^import[^\n]*\n/gm,'').replace(/\ninit\(\);\s*$/,'\nthis.runInit=init;');
 vm.runInNewContext(code,context,{filename:'app.js'});
 (async()=>{await context.runInit();
  assert.strictEqual(calls.some(url=>url.includes('/api/portfolio/')),true,'canonical portfolio request');

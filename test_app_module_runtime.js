@@ -6,6 +6,6 @@ const node=()=>({classList:{add(){},remove(){},toggle(){}},style:{setProperty(){
 const nodes=new Map([...ids].map(id=>[id,node()]));
 const all=()=>[]; const document={querySelector(selector){if(selector.startsWith('#'))return nodes.get(selector.slice(1))||null;return node()},querySelectorAll:all,createElement:node,addEventListener(){}};
 const context={document,window:{addEventListener(){},scrollTo(){},location:{hostname:'localhost',hash:'',replace(){}}},location:document.location||{hostname:'localhost',hash:'',replace(){}},localStorage:{getItem(){return null},setItem(){},removeItem(){}},sessionStorage:{getItem(){return null},removeItem(){}},fetch:async()=>({ok:true,json:async()=>({})}),setTimeout,clearTimeout,setInterval,clearInterval,Promise,URLSearchParams,Intl,DOMParser:class{},TextEncoder,atob:()=>'',btoa:()=>'',matchMedia:()=>({matches:false}),console,animalIdenticonSvg:()=>''};
-let code=source.replace(/^import[^;]+;\n/,'').replace(/\ninit\(\);\s*$/,'');
+let code=source.replace(/^import[^\n]*\n/gm,'').replace(/\ninit\(\);\s*$/,'');
 assert.doesNotThrow(()=>vm.runInNewContext(code,context,{filename:'app.js'}),'full app.js module evaluation');
 console.log(`full app module runtime passed: ${ids.size} HTML IDs exercised`);
