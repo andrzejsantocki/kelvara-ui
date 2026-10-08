@@ -12,10 +12,10 @@ assert.strictEqual(els['portfolio-positions'].children.length,2);assert.strictEq
 assert.strictEqual(els['portfolio-safeguards'].children.length,2,'all discovered vaults remain visible');
 assert.strictEqual(els['portfolio-safeguards'].children[0].textContent,'<img src=x> (a): r1: unknown — receipt pending');
 assert.strictEqual(els['portfolio-safeguards'].children[1].textContent,'Second (b): No safeguards reported');
-assert.strictEqual(els['safeguards-summary'].textContent,'Safeguard evidence');
+assert.strictEqual(els['safeguards-summary'].textContent,'1 safeguard across 2 connected vaults');
 assert.strictEqual(els['portfolio-coverage'].textContent,'Coverage partial: unknown/unknown satisfied');
 ctx.selectPortfolioPosition('b');assert.strictEqual(els['portfolio-positions'].children[1].attributes['aria-selected'],'true');assert.strictEqual(els['portfolio-positions'].children[0].attributes['aria-selected'],'false');
 assert.strictEqual(els['portfolio-safeguards'].children.length,2,'selection cannot filter global safeguards');
-assert.strictEqual(els['safeguards-summary'].textContent,'Safeguard evidence');
+assert.strictEqual(els['safeguards-summary'].textContent,'1 safeguard across 2 connected vaults');
 console.log('portfolio runtime passed');assert.strictEqual(els['portfolio-positions'].children[0].children[0].textContent,'<img src=x>','API strings are text nodes');
 assert.ok(els['portfolio-safeguards'].children.every(item=>!item.innerHTML),'safeguard labels use text nodes');
