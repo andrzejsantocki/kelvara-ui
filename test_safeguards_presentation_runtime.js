@@ -1,0 +1,12 @@
+const assert=require('assert'),fs=require('fs');
+const html=fs.readFileSync('app.html','utf8');
+const js=fs.readFileSync('app.js','utf8');
+assert(!/Your vault is watched in|Needs setup:/.test(html+js),'safeguards presentation has no warning-heavy summary copy');
+assert(!/Baseline not configured|setup-incomplete|Setup incomplete/.test(html+js),'customer-facing incomplete copy avoids deprecated setup wording');
+assert(/Configuration required|configuration required/.test(html+js),'customer-facing incomplete copy uses Configuration required');
+assert(html.includes('<details class="safeguard-explanation">'),'authority explanation is a disclosure');
+assert(html.includes('<summary>Why this matters</summary>'),'authority disclosure has a compact summary');
+assert(html.includes('The program owner can replace the deployed Kamino kVault code. If the owner changes, it is a high-signal security event, but not proof of malicious activity.'),'authority explanation remains exact');
+assert(!/legend|status legend|green.*yellow.*red/i.test(html+js),'no status legend is added');
+assert(js.includes('setText("#safeguards-summary","Safeguard evidence"'),'safeguards heading stays concise');
+console.log('safeguards presentation runtime passed');
