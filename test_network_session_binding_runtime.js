@@ -14,7 +14,9 @@ assert(app.includes('verifiedGenesisHash=session.genesisHash'),'server genesis r
 assert(app.includes('headers["x-kelvara-genesis"]=b.genesisHash'),'protected requests bind genesis');
 assert(app.includes('typeof record.genesisHash!=="string"'),'restore rejects missing genesis');
 assert(app.includes('sessionStorage.removeItem("kelvara_handoff")'),'network switch clears handoff');
-assert(app.includes('if(CURRENT_NETWORK==="devnet")'),'devnet fail-closed gate');
+assert(app.includes("CURRENT_NETWORK==='devnet'"),'devnet read-only branch');
+assert(app.includes('devnetRequest(address, protectionToken)'),'devnet uses bound token');
+assert(app.includes('Devnet read-only portfolio loaded.'),'devnet read-only success');
 assert(app.includes('if(!CURRENT_NETWORK)'),'missing network fail-closed gate');
 assert(!app.includes(`genesisHash:"${genesis}"`),'production does not silently default genesis');
 console.log('network session binding executable contract passed: challenge, verify, restore, protected requests, devnet, switching');
