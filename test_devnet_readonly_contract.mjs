@@ -18,6 +18,10 @@ test('rejects wrong network, genesis, extra, or non-empty portfolio data', () =>
 test('projects read-only Devnet labels and disabled capabilities', () => {
   assert.deepEqual(projectDevnetView(EMPTY), { networkLabel: 'Devnet', positionLabel: '0 positions', emptyLabel: 'No Devnet positions', accessLabel: 'Read-only', capabilities: { protect: false, evacuate: false, sign: false } });
 });
-test('builds network and genesis bound portfolio request metadata', () => {
-  assert.deepEqual(devnetRequest('Wallet111'), { path: '/api/portfolio/Wallet111', headers: { authorization: 'Bearer TOKEN', 'x-kelvara-network': 'devnet', 'x-kelvara-genesis': DEVNET_GENESIS } });
+test('requires a real bounded bearer token for portfolio request metadata', () => {
+  assert.throws(() => devnetRequest('Wallet111'));
+  assert.throws(() => devnetRequest('Wallet111', ''));
+  assert.throws(() => devnetRequest('Wallet111', 'x'.repeat(4097)));
+  assert.throws(() => devnetRequest('', 'token'));
+  assert.deepEqual(devnetRequest('Wallet111', 'token'), { path: '/api/portfolio/Wallet111', headers: { authorization: 'Bearer token', 'x-kelvara-network': 'devnet', 'x-kelvara-genesis': DEVNET_GENESIS } });
 });

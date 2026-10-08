@@ -14,7 +14,8 @@ export function projectDevnetView(portfolio) {
   return { networkLabel: 'Devnet', positionLabel: '0 positions', emptyLabel: 'No Devnet positions', accessLabel: 'Read-only', capabilities: { protect: false, evacuate: false, sign: false } };
 }
 
-export function devnetRequest(wallet, token = 'TOKEN') {
-  if (typeof wallet !== 'string' || !wallet) throw new TypeError('wallet_required');
+export function devnetRequest(wallet, token) {
+  if (typeof wallet !== 'string' || !wallet || wallet.length > 64) throw new TypeError('wallet_required');
+  if (typeof token !== 'string' || !token || token.length > 4096) throw new TypeError('token_required');
   return { path: `/api/portfolio/${encodeURIComponent(wallet)}`, headers: { authorization: `Bearer ${token}`, 'x-kelvara-network': 'devnet', 'x-kelvara-genesis': DEVNET_GENESIS } };
 }
