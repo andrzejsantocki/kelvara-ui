@@ -8,11 +8,12 @@ const app=fs.readFileSync('app.js','utf8');
 const devnet=fs.readFileSync('devnet-readonly.mjs','utf8');
 const GEN='EtWTRABZaYq6iMfeYKouRu166VU2xqa1wcaWoxPkrZBG';
 
-test('published root validates exact Devnet inspect before handoff',()=>{
- assert.match(root,/validateDevnetInspect/);
+test('published root validates exact canonical Devnet portfolio before handoff',()=>{
+ assert.match(root,/validateDevnetPortfolio/);
+ assert.match(root,/inspectionPath=network==='devnet'\?['"]\/api\/portfolio\/['"]:['"]\/api\/inspect\/['"]/);
  assert.match(root,/sourceStatus.*canonical_devnet_empty_read_only/);
- assert.match(root,/position.*null/);
- assert.match(root,/authority.*null/);
+ assert.match(root,/validateDevnetPortfolio/);
+ assert.doesNotMatch(root,/validateDevnetInspect/);
 });
 test('connected app permits Solflare Devnet and binds token equality',()=>{
  assert.doesNotMatch(app,/CURRENT_NETWORK==="devnet"\)throw new Error\("devnet_unavailable"\)/);

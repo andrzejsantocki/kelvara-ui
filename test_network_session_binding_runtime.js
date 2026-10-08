@@ -5,7 +5,7 @@ assert(index.includes("location.replace('/app.html?v=network-switch-1')"),'publi
 assert(index.includes('data-network="mainnet-beta"'),'published root exposes network selection');
 assert(workspace.includes('<script type="module" src="/app.js?v=network-switch-1"></script>'),'published workspace loads versioned app.js');
 assert(fs.readFileSync('CNAME','utf8').trim()==='app.kelvara.xyz','published hostname parity');
-assert(app.includes('post("/api/auth/challenge",{wallet:walletAddress,network})'),'challenge sends selected network body');
+assert(app.includes('post("/api/auth/challenge",{wallet:address,network})'),'challenge sends selected network body');
 assert(app.includes('headers["x-kelvara-network"]=payload.network'),'authenticated POSTs send exact network header');
 assert(app.includes('post("/api/auth/verify",{wallet:walletAddress,message:challenge.message,signature,network})'),'verify sends selected network body');
 assert(app.includes('challenge.genesisHash'),'challenge genesis required before signing');
