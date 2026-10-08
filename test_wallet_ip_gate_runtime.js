@@ -20,6 +20,6 @@ function run({ip,lookupError=false,cachedIp,connectResult}={}){
   let r=run({ip:ALLOWED});await r.click();assert.strictEqual(r.connectCalls,1,`allowed IP preserves provider connect: ${r.message} ${r.fetchCalls.join(',')}`);
   r=run({ip:'8.8.8.8'});await r.click();assert.strictEqual(r.message,'The app is currently under scheduled maintenance. Contact help@kelvara.xyz.','denied IP shows exact maintenance message');assert.strictEqual(r.connectCalls,0,'denied IP makes zero provider connect calls');
   r=run({lookupError:true});await r.click();assert.strictEqual(r.message,'The app is currently under scheduled maintenance. Contact help@kelvara.xyz.','lookup failure fails closed');assert.strictEqual(r.connectCalls,0,'lookup failure makes zero provider connect calls');
-  r=run({cachedIp:ALLOWED,ip:'8.8.8.8'});await r.click();assert.strictEqual(r.connectCalls,1,'valid cached allowed IP preserves connect');
-  console.log('wallet IP gate runtime passed: allowed, denied, lookup failure, cache, zero provider connect');
+  r=run({cachedIp:ALLOWED,ip:'8.8.8.8'});await r.click();assert.strictEqual(r.message,'The app is currently under scheduled maintenance. Contact help@kelvara.xyz.','stale allowed-IP cache cannot bypass fresh lookup');assert.strictEqual(r.connectCalls,0,'stale allowed-IP cache makes zero provider connect calls');assert.strictEqual(r.fetchCalls.length,1,'every connect attempt performs a fresh lookup');
+  console.log('wallet IP gate runtime passed: allowed, denied, lookup failure, stale-cache denial, zero provider connect');
 })().catch(error=>{console.error(error);process.exitCode=1});
