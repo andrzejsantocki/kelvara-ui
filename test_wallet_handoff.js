@@ -8,7 +8,7 @@ assert.match(css, /\.scope::before[\s\S]*radial-gradient\(circle/);
 assert.doesNotMatch(landing, /<link[^>]+styles\.css/);
 assert.match(app, /id="pane-positions"/);
 assert.match(app, /<link rel="stylesheet" href="\/styles\.css/);
-assert.match(app, /<script[^>]+src="\/app\.js\?v=session-diag-2"/);
+assert.match(app, /<script[^>]+src="\/app\.js\?v=network-switch-1"/);
 assert.doesNotMatch(app, /stage-boot|SECURE SESSION|Verifying/);
 assert.match(landing, /sessionStorage\.setItem\(['"]kelvara_handoff['"]/);
 assert.doesNotMatch(landing, /localStorage/);
