@@ -7,7 +7,7 @@ assert(workspace.includes('<script type="module" src="/app.js?v=network-switch-1
 assert(fs.readFileSync('CNAME','utf8').trim()==='app.kelvara.xyz','published hostname parity');
 assert(app.includes('post("/api/auth/challenge",{wallet:address,network})'),'challenge sends selected network body');
 assert(app.includes('headers["x-kelvara-network"]=payload.network'),'authenticated POSTs send exact network header');
-assert(app.includes('post("/api/auth/verify",{wallet:walletAddress,message:challenge.message,signature,network})'),'verify sends selected network body');
+assert(app.includes('post("/api/auth/verify",{wallet:address,message:challenge.message,signature,network})'),'verify sends selected network body');
 assert(app.includes('challenge.genesisHash'),'challenge genesis required before signing');
 assert(app.includes('session.genesisHash!==challenge.genesisHash'),'verify genesis must match challenge');
 assert(app.includes('verifiedGenesisHash=session.genesisHash'),'server genesis retained');

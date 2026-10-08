@@ -10,7 +10,7 @@ const GEN='EtWTRABZaYq6iMfeYKouRu166VU2xqa1wcaWoxPkrZBG';
 
 test('published root validates exact canonical Devnet portfolio before handoff',()=>{
  assert.match(root,/validateDevnetPortfolio/);
- assert.match(root,/inspectionPath=network==='devnet'\?['"]\/api\/portfolio\/['"]:['"]\/api\/inspect\/['"]/);
+ assert.match(root,/inspectionPath=attemptNetwork==='devnet'\?['"]\/api\/portfolio\/['"]:['"]\/api\/inspect\/['"]/);
  assert.match(root,/sourceStatus.*canonical_devnet_empty_read_only/);
  assert.match(root,/validateDevnetPortfolio/);
  assert.doesNotMatch(root,/validateDevnetInspect/);

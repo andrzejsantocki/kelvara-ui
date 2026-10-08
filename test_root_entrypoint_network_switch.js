@@ -29,6 +29,6 @@ function harness(){
  const h=harness();h.ss.set('kelvara_network_context','devnet');h.ss.set('kelvara_app_session',JSON.stringify({source:'phantom',network:'devnet',wallet:'StaleConnectedWallet11111111111111111111111111111111111'}));h.nodes.get('realm-label').onclick();
  h.nodes.get('network-selector').querySelectorAll()[0].onclick();await h.settle();
  assert.strictEqual(h.ss.get('kelvara_network_context'),'mainnet-beta','switch back persists Mainnet enum at root');
- assert.strictEqual(h.counts().disconnects,1,'switch back tears down stale connected provider');
+ assert.strictEqual(h.counts().disconnects,0,'switch back leaves unrelated injected provider untouched');
  console.log('root entrypoint network selection and fresh-auth regressions passed');
 })().catch(error=>{console.error(error);process.exitCode=1});
