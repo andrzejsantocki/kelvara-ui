@@ -14,7 +14,7 @@ function boot(sessionStorage,provider,legacy={kelvara_prod_wallet:key,kelvara_pr
   vm.runInNewContext(code,context,{filename:'app.js'});
   return{context,calls,redirects,nodes};
 }
-function trustedProvider({reject=false,mismatch=false}={}){let connects=0,signs=0,events={};const publicKey={toString:()=>mismatch?'bad':key};return{isConnected:true,publicKey,connect:async options=>{assert.strictEqual(options.onlyIfTrusted,true);connects++;if(reject)throw new Error('rejected');return{publicKey}},signMessage:async()=>{signs++;throw new Error('unexpected auth challenge')},on(name,handler){events[name]=handler},emit(name,value){events[name]?.(value)},get connects(){return connects},get signs(){return signs}}}
+function trustedProvider({reject=false,mismatch=false}={}){let connects=0,signs=0,events={};const publicKey={toString:()=>mismatch?'bad':key};return{isConnected:!reject,publicKey,connect:async options=>{assert.strictEqual(options.onlyIfTrusted,true);connects++;if(reject)throw new Error('rejected');return{publicKey}},signMessage:async()=>{signs++;throw new Error('unexpected auth challenge')},on(name,handler){events[name]=handler},emit(name,value){events[name]?.(value)},get connects(){return connects},get signs(){return signs}}}
 async function assertRejectedSession(session,provider){const result=boot(session,provider);await result.context.boot();assert.deepStrictEqual(result.redirects,['/?wallet_error=session']);assert.strictEqual(session.getItem('kelvara_app_session'),null)}
 (async()=>{
   const genesisHash='5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d',handoff={wallet:key,source:'phantom',token,network:'mainnet-beta',genesisHash,evidence},session=store({kelvara_handoff:JSON.stringify(handoff)}),provider=trustedProvider();
