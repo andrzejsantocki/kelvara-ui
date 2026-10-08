@@ -1,9 +1,11 @@
 const assert=require('assert'),fs=require('fs'),vm=require('vm');
 const source=fs.readFileSync('app.js','utf8');
+const diagStart=source.indexOf('const SESSION_DIAG_VERSION');
+const diagEnd=source.indexOf('function selectedNetwork',diagStart);
 const start=source.indexOf('async function waitForWalletProvider');
 const end=source.indexOf('\nasync function init',start);
-assert(start>=0&&end>start,'handoff runtime present');
-const handoffCode=source.slice(start,end);
+assert(start>=0&&end>start&&diagStart>=0&&diagEnd>diagStart,'handoff runtime present');
+const handoffCode=`${source.slice(diagStart,diagEnd)}const CURRENT_NETWORK='devnet';const WALLET_SOURCES=['phantom','solflare','backpack'];`+source.slice(start,end);
 const key='7sXHKv8RJG4ENmiDSpBEgiEnktJXPaVEmq2a8QBsvEgJ';
 const genesisHash='EtWTRABZaYq6iMfeYKouRu166VU2xqa1wcaWoxPkrZBG';
 const evidence={position:{name:'Devnet position'},authority:{status:'ok'}};
@@ -17,7 +19,7 @@ const context={
   validNetworkRecord(record){return record?.network==='devnet'&&record.genesisHash===genesisHash},
   validWalletSession(record){return record?.network==='devnet'&&record.wallet===key&&record.source==='solflare'&&record.token==='handoff-token'&&record.genesisHash===genesisHash},
   removeAppSession(){sessionStorage.removeItem('kelvara_app_session')},
-  walletProvider(source){assert.strictEqual(source,'solflare');return provider},
+  walletProvider(source){return source==='solflare'?provider:null},
   withTimeout(p){return p},
   saveAppSession(wallet,source,token){sessionStorage.setItem('kelvara_app_session',JSON.stringify({wallet,source,token,network:'devnet',genesisHash}))},
   rememberWallet(){}, bindWalletEvents(){}, renderPosition(){}, renderAuthority(){},
