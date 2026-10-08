@@ -9,6 +9,14 @@ export function validateDevnetPortfolio(value) {
   return value;
 }
 
+export function validateDevnetInspect(wallet, value) {
+  if (typeof wallet !== 'string' || !wallet || !value || typeof value !== 'object' || Array.isArray(value)) throw new TypeError('devnet_inspect_invalid');
+  const keys = ['network', 'genesisHash', 'wallet', 'position', 'authority', 'sourceStatus'];
+  if (Object.keys(value).sort().join(',') !== keys.slice().sort().join(',')) throw new TypeError('devnet_inspect_shape_invalid');
+  if (value.network !== 'devnet' || value.genesisHash !== DEVNET_GENESIS || value.wallet !== wallet || value.position !== null || value.authority !== null || value.sourceStatus !== 'canonical_devnet_empty_read_only') throw new TypeError('devnet_inspect_binding_invalid');
+  return value;
+}
+
 export function projectDevnetView(portfolio) {
   validateDevnetPortfolio(portfolio);
   return { networkLabel: 'Devnet', positionLabel: '0 positions', emptyLabel: 'No Devnet positions', accessLabel: 'Read-only', capabilities: { protect: false, evacuate: false, sign: false } };
