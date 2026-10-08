@@ -5,7 +5,7 @@ assert(!/<script type="module" src="\/app\.js"><\/script>/.test(html),'stale mod
 assert(landing.includes("location.replace('/app.html?v=session-diag-2')"),'landing cache-buster URL');
 assert(!landing.includes("location.replace('/app.html')"),'stale landing URL absent');
 const key='DiagWalletFixture11111111111111111111111111111111',token='DiagBearerTokenFixture',genesis='EtWTRABZaYq6iMfeYKouRu166VU2xqa1wcaWoxPkrZBG',evidence={position:{name:'Diag Evidence Marker'},authority:{status:'Diag Authority Marker'},nonce:'DiagNonceMarker',signature:'DiagSignatureMarker'};
-function store(initial){return{data:new Map(Object.entries(initial||{})),getItem(k){return this.data.has(k)?this.data.get(k):null},setItem(k,v){this.data.set(k,String(v))},removeItem(k){this.data.delete(k)}}}
+function store(initial,options={}){return{data:new Map(Object.entries(initial||{})),getItem(k){if(k===options.readFailureKey||options.readFailureKeys?.includes(k))throw Object.assign(new Error('storage read secret marker'),{name:'Error'});return this.data.has(k)?this.data.get(k):null},setItem(k,v){this.data.set(k,String(v));if(options.onSet)options.onSet(k,v)},removeItem(k){if(k===options.removeFailureKey&&options.removeFailures-- > 0)throw Object.assign(new Error('storage cleanup secret marker'),{name:'Error'});this.data.delete(k)}}}
 function node(){return{classList:{add(){},remove(){},toggle(){}},style:{setProperty(){}},dataset:{},value:'',checked:false,disabled:false,textContent:'',innerHTML:'',onclick:null,onchange:null,onkeydown:null,addEventListener(){},setAttribute(){},replaceChildren(){},closest(){return this},getBoundingClientRect(){return{left:0,top:0,width:1,height:1}}}}
 function run(session,provider){
   const logs=[],sessionStorage=session,nodes=new Map();
@@ -16,7 +16,7 @@ function run(session,provider){
   const context={normalizeNetwork(value){return value==='mainnet-beta'||value==='devnet'?value:null},document,window:{addEventListener(){},scrollTo(){},location,solflare:provider},location,localStorage:store(),sessionStorage,fetch:async()=>({ok:true,text:async()=>JSON.stringify({})}),setTimeout,clearTimeout,setInterval:()=>1,clearInterval,Promise,URLSearchParams,Intl,DOMParser:class{},TextEncoder,atob:()=>'',btoa:()=>'',matchMedia:()=>({matches:false}),console:consoleCapture,animalIdenticonSvg:()=>''};
   const code=source.replace(/^import[^\n]*\n/gm,'').replace(/\ninit\(\);\s*$/,'')+'\nthis.consumeHandoff=consumeHandoff;this.restoreAppSession=restoreAppSession;this.init=init;this.sessionDiag=sessionDiag;this.sessionDiagAttempt=sessionDiagAttempt;';
   vm.runInNewContext(code,context,{filename:'app.js'});
-  return{context,logs,redirects};
+  return{context,logs,redirects,sessionStorage};
 }
 function records(result){return result.logs.filter(args=>args[0]==='[Kelvara session]').map(args=>args[1]);}
 function assertSafeSchema(items){
@@ -46,6 +46,16 @@ function assertSafeSchema(items){
   assert(successRecords.some(item=>item.stage==='public_key_state'&&item.publicKeyPresent===true),'public key presence');
   assert(successRecords.some(item=>item.stage==='wallet_match'&&item.walletMatch===true),'exact wallet match');
   assert(successRecords.some(item=>item.stage==='trusted_reconnect'&&item.reconnect==='not-attempted'),'trusted reconnect skipped for current provider');
+  const cleanupOptions={removeFailureKey:'kelvara_handoff',removeFailures:1,readFailureKeys:[],onSet(key){}};
+  const cleanupProvider={isConnected:true,publicKey:{toString:()=>key},connect:async()=>{throw new Error('must not reconnect')}};
+  const cleanupFailure=run(store({kelvara_handoff:JSON.stringify({wallet:key,source:'solflare',token,network:'devnet',genesisHash:genesis,evidence})},cleanupOptions),cleanupProvider);
+  assert.strictEqual(await cleanupFailure.context.consumeHandoff(),false,'handoff cleanup failure rejects after session save');
+  assert(cleanupFailure.sessionStorage.getItem('kelvara_app_session'),'session save completed before cleanup failure');
+  cleanupProvider.isConnected=false;cleanupProvider.publicKey=null;
+  await cleanupFailure.context.init();
+  assert.deepStrictEqual(cleanupFailure.redirects,['/?wallet_error=session'],'cleanup failure redirects fail-closed');
+  const cleanupRecords=records(cleanupFailure);assertSafeSchema(cleanupRecords);assert(cleanupRecords.some(item=>item.stage==='handoff_cleanup'&&item.ok===false),'cleanup failure diagnostic stage');assert(cleanupRecords.filter(item=>item.stage==='handoff_cleanup').length<=2,'cleanup diagnostics bounded');
+  const cleanupSerialized=JSON.stringify(cleanupFailure.logs);for(const secret of ['storage cleanup secret marker',key,token,genesis,'Diag Evidence Marker'])assert(!cleanupSerialized.includes(secret),`cleanup diagnostics omit ${secret}`);
   const malformed=run(store({kelvara_handoff:'{malformed Diag Evidence Marker'}),null);
   assert.strictEqual(await malformed.context.consumeHandoff(),false,'malformed handoff rejected');
   assert(records(malformed).some(item=>item.stage==='handoff_parse'&&item.ok===false),'malformed parse stage');
