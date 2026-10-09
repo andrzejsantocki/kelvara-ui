@@ -1,6 +1,6 @@
 const assert=require('assert'),fs=require('fs'),vm=require('vm');
 const source=fs.readFileSync('app.js','utf8'),html=fs.readFileSync('app.html','utf8'),landing=fs.readFileSync('index.html','utf8');
-assert(/<script type="module" src="\/app\.js\?v=7626559"><\/script>/.test(html),'published module cache-buster URL');
+assert(/<script type="module" src="\/app\.js\?v=overview-count-20261009"><\/script>/.test(html),'published module cache-buster URL');
 assert(!/<script type="module" src="\/app\.js"><\/script>/.test(html),'stale module URL absent');
 assert(landing.includes("location.replace('/app.html?v=7626559')"),'landing cache-buster URL');
 assert(!landing.includes("location.replace('/app.html')"),'stale landing URL absent');
