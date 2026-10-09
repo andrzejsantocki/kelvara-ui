@@ -6,4 +6,5 @@ if(!css.includes('.position-card-icon')) throw new Error('card icon styles missi
 if(!app.includes('assets/kamino.svg')) throw new Error('protocol icon mapping missing');
 if(!app.includes('assets/steakhouse-usdg.svg')) throw new Error('steakhouse icon mapping missing');
 if(!app.includes('if(empty)empty.classList.toggle("hidden",positions.length>0)')) throw new Error('portfolio renderer must terminate eligible-position loading state');
+if(/if\(row\)row\.classList/.test(app)) throw new Error('removed position-row reference still aborts selection');
 console.log('positions redesign contract ok');
