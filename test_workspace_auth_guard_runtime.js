@@ -1,0 +1,21 @@
+const assert=require('assert'),fs=require('fs'),vm=require('vm');
+const appHtml=fs.readFileSync('app.html','utf8'),source=fs.readFileSync('app.js','utf8');
+assert.match(appHtml,/class="connected-workspace"[^>]*\shidden(?:[ =>]|\/)/,'workspace is statically hidden');
+assert.match(source,/function setWorkspaceVisible\(visible\)/,'runtime guard exists');
+assert.match(source,/setWorkspaceVisible\(false\)/,'invalidation hides workspace');
+assert.match(source,/setWorkspaceVisible\(true\)/,'authenticated init reveals workspace');
+assert.match(source,/connectWallet\(reconnect\.source,\{protectedStartup:true\}\)/,'reconnect auth failure is authoritative');
+assert.match(source,/location\.replace\([^)]*wallet_error=session/,'protected startup redirects canonically');
+assert.match(source,/try\{await inspect\(\);setWorkspaceVisible\(true\)\}/,'workspace reveal follows authenticated inspection');
+assert.match(fs.readFileSync('styles.css','utf8'),/\.connected-workspace\[hidden\]\{display:none!important\}/,'workspace hidden state cannot be overridden');
+function node(){return{hidden:true,classList:{add(){},remove(){},toggle(){}},style:{setProperty(){}},textContent:'',value:'',setAttribute(){},removeAttribute(){},replaceChildren(){},appendChild(){},addEventListener(){},querySelectorAll(){return[]},closest(){return this}}}
+const workspace=node(),main=node(),nodes=new Map([['connected-workspace',workspace],['message',node()],['wallet',node()],['position-wallet',node()],['position-card',node()],['no-position',node()],['portfolio-positions',node()],['portfolio-safeguards',node()],['overview-heading',node()],['overview-evidence',node()],['overview-position',node()],['overview-balance',node()],['overview-authority',node()],['overview-protection',node()],['position-list-status',node()],['portfolio-protocol-status',node()],['portfolio-coverage',node()],['safeguards-summary',node()],['account-session',node()],['account-provider',node()],['account-address',node()]]);
+const storage={getItem(){return null},setItem(){},removeItem(){}};
+const document={body:node(),querySelector(selector){if(selector==='#connected-workspace')return workspace;if(selector==='main')return main;if(selector.startsWith('#'))return nodes.get(selector.slice(1))||node();return node()},querySelectorAll(){return[]},addEventListener(){}};
+const redirects=[];const context={document,window:{addEventListener(){},scrollTo(){}},location:{hostname:'localhost',hash:'',replace:url=>redirects.push(url)},sessionStorage:storage,localStorage:storage,normalizeNetwork:v=>v==='mainnet-beta'||v==='devnet'?v:null,fetch:async()=>({ok:true,status:200,text:async()=>JSON.stringify({})}),setTimeout,clearTimeout,setInterval:()=>1,clearInterval,Promise,URLSearchParams,Intl,DOMParser:class{},TextEncoder,atob:()=>'',btoa:()=>'',matchMedia:()=>({matches:false}),console,animalIdenticonSvg:()=>''};
+const code=source.replace(/^import[^\n]*\n/gm,'').replace(/\ninit\(\);\s*$/,'')+'\nglobalThis.test={setWorkspaceVisible};';
+vm.runInNewContext(code,context,{filename:'app.js'});
+assert.strictEqual(workspace.hidden,true,'workspace starts hidden');
+context.test.setWorkspaceVisible(true);assert.strictEqual(workspace.hidden,false,'authenticated reveal is explicit');
+context.test.setWorkspaceVisible(false);assert.strictEqual(workspace.hidden,true,'invalidation hides workspace synchronously');assert.deepStrictEqual(redirects,[],'guard harness has no implicit navigation');
+console.log('workspace authentication guard runtime passed');

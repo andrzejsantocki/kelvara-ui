@@ -11,7 +11,7 @@ assert.match(css,/[^\n]*#toast[^}]*transform:translateX\(-50%\)/,'toast uses bot
 assert.doesNotMatch(css,/[^\n]*#toast[^}]*top:50%/,'toast is not vertically centered');
 assert.doesNotMatch(css,/[^\n]*#toast[^}]*transform:translate\(-50%,-50%\)/,'toast does not use viewport-center transform');
 assert.match(app,/NETWORK_RECONNECT_KEY/,'network switch records fresh-auth reconnect intent');
-assert.match(app,/connectWallet\(reconnect\.source\)/,'reload consumes reconnect intent');
+assert.match(app,/connectWallet\(reconnect\.source(?:,\{protectedStartup:true\})?\)/,'reload consumes reconnect intent with protected startup semantics');
 assert.match(app,/sessionStorage\.removeItem\(NETWORK_RECONNECT_KEY\)/,'reconnect intent is one-shot');
 assert.match(app,/clearNetworkScopedState\(\)/,'switch clears scoped state');
 assert.match(app,/previous\.disconnect/,'switch has provider disconnect barrier');
