@@ -5,4 +5,5 @@ if(!html.includes('Safeguards informational')) throw new Error('truthful badge m
 if(!css.includes('.position-card-icon')) throw new Error('card icon styles missing');
 if(!app.includes('assets/kamino.svg')) throw new Error('protocol icon mapping missing');
 if(!app.includes('assets/steakhouse-usdg.svg')) throw new Error('steakhouse icon mapping missing');
+if(!app.includes('if(empty)empty.classList.toggle("hidden",positions.length>0)')) throw new Error('portfolio renderer must terminate eligible-position loading state');
 console.log('positions redesign contract ok');
