@@ -23,13 +23,18 @@ function declarations(selector) {
 const nav = declarations('\\.nav');
 const control = declarations('\\.wallet-control');
 const chip = declarations('\\.wallet-chip');
+const network = declarations('\\.tag');
 assert.strictEqual(nav.display, 'flex', 'network and wallet controls need one shared flex parent');
 assert.strictEqual(nav['align-items'], 'center', 'shared parent must center both controls equally');
+assert.strictEqual(nav.gap, '12px', 'network and wallet controls must use the tightened shared gap');
 assert.strictEqual(control.display, 'flex', 'wallet control must remain a flex item');
 assert.strictEqual(control['align-items'], 'center', 'wallet control must center its button');
 assert.strictEqual(chip.color, 'var(--ink)', 'normal Connect wallet text must use strong dark ink');
 assert.strictEqual(chip.border, '1px solid var(--line-strong)', 'normal Connect wallet must have visible logged-in-weight border');
 assert.strictEqual(chip.background, 'var(--surface)', 'normal Connect wallet must retain the logged-in light surface');
+assert.strictEqual(network.color, 'var(--ink)', 'normal Mainnet text must use strong dark ink');
+assert.strictEqual(network.border, '1px solid var(--line-strong)', 'normal Mainnet must have a visible strong border');
+assert.strictEqual(network.background, 'var(--surface)', 'normal Mainnet must use the same light surface as Connect wallet');
 for (const property of ['margin', 'margin-top', 'top', 'transform']) {
   assert(!(property in nav), `shared nav must not use ${property} alignment nudges`);
   assert(!(property in control), `wallet control must not use ${property} alignment nudges`);
