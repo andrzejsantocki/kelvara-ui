@@ -1,8 +1,8 @@
 const assert=require('assert'),fs=require('fs'),vm=require('vm');
 const source=fs.readFileSync('app.js','utf8'),html=fs.readFileSync('app.html','utf8'),landing=fs.readFileSync('index.html','utf8');
-assert(/<script type="module" src="\/app\.js\?v=414f575"><\/script>/.test(html),'published module cache-buster URL');
+assert(/<script type="module" src="\/app\.js\?v=8f4d2c1"><\/script>/.test(html),'published module cache-buster URL');
 assert(!/<script type="module" src="\/app\.js"><\/script>/.test(html),'stale module URL absent');
-assert(landing.includes("location.replace('/app.html?v=414f575')"),'landing cache-buster URL');
+assert(landing.includes("location.replace('/app.html?v=8f4d2c1')"),'landing cache-buster URL');
 assert(!landing.includes("location.replace('/app.html')"),'stale landing URL absent');
 const key='DiagWalletFixture11111111111111111111111111111111',token='DiagBearerTokenFixture',genesis='EtWTRABZaYq6iMfeYKouRu166VU2xqa1wcaWoxPkrZBG',evidence={position:{name:'Diag Evidence Marker'},authority:{status:'Diag Authority Marker'},nonce:'DiagNonceMarker',signature:'DiagSignatureMarker'};
 function store(initial,options={}){return{data:new Map(Object.entries(initial||{})),getItem(k){if(k===options.readFailureKey||options.readFailureKeys?.includes(k))throw Object.assign(new Error('storage read secret marker'),{name:'Error'});return this.data.has(k)?this.data.get(k):null},setItem(k,v){this.data.set(k,String(v));if(options.onSet)options.onSet(k,v)},removeItem(k){if(k===options.removeFailureKey&&options.removeFailures-- > 0)throw Object.assign(new Error('storage cleanup secret marker'),{name:'Error'});this.data.delete(k)}}}
@@ -68,7 +68,7 @@ function assertSafeSchema(items){
   assert.strictEqual(await restored.context.restoreAppSession(),false,'restore reconnect failure rejected');
   const restoredRecords=records(restored);assert(restoredRecords.some(item=>item.stage==='restore_load'&&item.reason==='loaded'),'restore load stage');assert(restoredRecords.some(item=>item.stage==='restore_parse'&&item.ok===true),'restore parse stage');assert(restoredRecords.some(item=>item.stage==='restore_validation'&&item.ok===true),'restore validation stage');assert(restoredRecords.some(item=>item.stage==='restore_final'&&item.ok===false),'restore final failure stage');
   const failedInit=run(store({kelvara_handoff:JSON.stringify({wallet:key,source:'solflare',token,network:'devnet',genesisHash:genesis,evidence})}),{isConnected:false,publicKey:null,connect:async()=>{throw new Error('Diag init reconnect exception')}});await failedInit.context.init();assert.deepStrictEqual(failedInit.redirects,['/?wallet_error=session'],'failed handoff+restore redirects');assert(records(failedInit).some(item=>item.stage==='redirect'&&item.reason==='redirect-session'),'session redirect reason');
-  const noNetwork=run(store(),null);await noNetwork.context.init();assert.deepStrictEqual(noNetwork.redirects,['/?wallet_error=session'],'missing network redirects');assert(records(noNetwork).some(item=>item.stage==='redirect'&&item.reason==='redirect-network'),'network redirect reason');
+  const noNetwork=run(store({kelvara_network_context:'invalid'}),null);await noNetwork.context.init();assert.deepStrictEqual(noNetwork.redirects,['/?wallet_error=session'],'missing network redirects');assert(records(noNetwork).some(item=>item.stage==='redirect'&&item.reason==='redirect-network'),'network redirect reason');
   assertSafeSchema(successRecords.concat(records(malformed),rejectedRecords,restoredRecords,records(failedInit),records(noNetwork)));
   const serialized=JSON.stringify(success.logs.concat(malformed.logs,rejected.logs,restored.logs,failedInit.logs,noNetwork.logs));
   for(const secret of [key,token,genesis,'Diag Evidence Marker','DiagNonceMarker','DiagSignatureMarker'])assert(!serialized.includes(secret),`secret-safe logs omit ${secret}`);
