@@ -2,6 +2,7 @@ const assert=require('assert'),fs=require('fs'),vm=require('vm');
 const index=fs.readFileSync('index.html','utf8');
 assert(index.includes('<script data-wallet-module>'),'root entrypoint owns wallet/network module');
 assert(index.includes('id="network-selector"'),'root entrypoint exposes network chooser');
+assert(/<div id="network-selector"[^>]*\bhidden(?:=|\s|>)/.test(index),'network chooser is hidden before runtime boot');
 const inline=index.match(/<script data-wallet-module>([\s\S]*?)<\/script>/)[1];
 const MAIN='5eykt4UsvFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d',DEV='EtWTRABZaYq6iMfeYKouRu166VU2xqa1wcaWoxPkrZBG';
 function node(id,attrs={}){return Object.assign({id,textContent:'',hidden:false,onclick:null,dataset:{},setAttribute(n,v){this[n]=v},addEventListener(){},querySelectorAll(){return[]}},attrs)}
