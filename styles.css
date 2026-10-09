@@ -113,4 +113,3 @@ html{background:var(--canvas)}body{background:var(--canvas);color:var(--ink)}
 .wallet-button .wallet-chip{height:40px;min-height:40px;display:inline-flex;align-items:center;transform:none}
 .wallet-button .wallet-chip:hover,.wallet-button .wallet-chip:focus-visible{transform:none}
 @media(max-width:720px){.header-actions{gap:8px}}
-@media(max-width:430px){.network-button{display:none}}

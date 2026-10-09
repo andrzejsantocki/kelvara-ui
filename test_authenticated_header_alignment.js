@@ -21,5 +21,8 @@ assert.match(controls, /height\s*:\s*40px/g);
 assert(!/\.network-button[^}]*\b(?:margin-top|top|translateY)\s*:/s.test(css));
 assert(!/\.wallet-button[^}]*\b(?:margin-top|top|translateY)\s*:/s.test(css));
 assert(!/\.wallet-button[^}]*transform\s*:\s*translateY/s.test(css));
+const responsiveCss = css.split(/@media/).slice(1).join('\n');
+assert(!/(?:\.network-button|#network-context-label)[^{}]*display\s*:\s*none/.test(responsiveCss), 'responsive rules must keep network controls available');
+assert.match(responsiveCss, /\.network\s*\{[^{}]*display\s*:\s*none/);
 assert.match(html, /styles\.css\?v=20261009-auth-header-align/);
 console.log('authenticated header alignment contract: passed');
