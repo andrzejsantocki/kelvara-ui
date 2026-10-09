@@ -7,7 +7,7 @@ assert(css.includes('#chip-address'), 'wallet address foreground selector missin
 assert(/\.wallet-chip\.header-connect[^}]*color:\s*#(?:1|0|[2-9a-f])/i.test(css), 'wallet foreground must be dark');
 assert(css.includes('.status-pill.matches'), 'matching safeguard status must have a success style');
 assert(css.includes('.status-pill.changed'), 'changed safeguard status must have a breach style');
-assert(html.includes('styles.css?v=20261008-safeguards'), 'stylesheet cache must be bumped');
+assert(html.includes('styles.css?v=414f575'), 'stylesheet cache must be bumped');
 for(const stale of ['Selected position','No verified position loaded.','Unknown','Not loaded','Fast close','Evidence observed'])assert(!html.includes(stale),`stale customer copy: ${stale}`);
 for(const required of ['Detected positions','USDG balance','Safeguards','Protection','Provider','Network','Session'])assert(html.includes(required),`missing workspace fact: ${required}`);
 for(const label of ['Current authority','Configured baseline','Observed','Program ID','ProgramData account'])assert(html.includes(`<dt>${label}</dt>`),`missing safeguard evidence label: ${label}`);
