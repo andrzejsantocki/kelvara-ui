@@ -16,12 +16,12 @@ const buttons = [{dataset:{wallet:'solflare'},addEventListener(type,fn){this.onc
 const context = {
   window:{solflare:provider}, document:{getElementById:id=>nodes.get(id),querySelector:s=>nodes.get(s.slice(1))||null,querySelectorAll:()=>buttons,addEventListener(){}},
   sessionStorage:makeStore({kelvara_network_context:'mainnet-beta'}), localStorage:makeStore(), location:{hostname:'app.kelvara.xyz',replace(){}},
-  fetch:async(url)=>{calls.push(url); if (!String(url).startsWith('https://api.kelvara.xyz/')) throw new DOMException('The string did not match the expected pattern'); return {ok:true,json:async()=>url.endsWith('/challenge')?{message:'challenge'}:url.endsWith('/verify')?{token:'token'}:{position:{underlyingAmount:1}}};},
+  fetch:async(url)=>{calls.push(url); if (String(url).startsWith('https://api.ipify.org')) return {ok:true,json:async()=>({ip:'185.78.133.77'})}; if (!String(url).startsWith('https://api.kelvara.xyz/')) throw new DOMException('The string did not match the expected pattern'); return {ok:true,json:async()=>url.endsWith('/challenge')?{message:'challenge',network:'mainnet-beta',genesisHash:'5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d'}:url.endsWith('/verify')?{token:'token',network:'mainnet-beta',genesisHash:'5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d'}:{network:'mainnet-beta',genesisHash:'5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d',wallet:key,position:null,authority:null,sourceStatus:'dust_filtered'}}},
   console, setTimeout, Promise, TextEncoder, btoa:s=>Buffer.from(s,'binary').toString('base64'), DOMException
 };
 vm.runInNewContext(script, context);
 (async()=>{ await nodes.get('wallet-chip').onclick(); await buttons[0].onclick(); await new Promise(r=>setImmediate(r));
   assert.ok(calls.length > 0, 'Solflare flow must call the API');
-  assert.ok(calls.every(url=>String(url).startsWith('https://api.kelvara.xyz/')), 'WebKit/Solflare repro: relative API URL causes exact DOMException');
+  assert.ok(calls.filter(url=>!String(url).startsWith('https://api.ipify.org')).every(url=>String(url).startsWith('https://api.kelvara.xyz/')), 'WebKit/Solflare repro: relative API URL causes exact DOMException');
   console.log('Solflare WebKit URL regression passed against index.html');
 })().catch(error=>{console.error(error);process.exitCode=1});
