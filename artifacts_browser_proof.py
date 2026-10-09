@@ -77,7 +77,8 @@ def evidence():
       scrollWidth:document.documentElement.scrollWidth, clientWidth:document.documentElement.clientWidth,
       sectionRects:[...document.querySelectorAll('.governance-vault > h4')].map(node=>({label:node.textContent.trim(),top:node.getBoundingClientRect().top,bottom:node.getBoundingClientRect().bottom})),
       actionRects:[...document.querySelectorAll('.governance-action')].map(node=>({top:node.getBoundingClientRect().top,bottom:node.getBoundingClientRect().bottom})),
-      recentActionCount:[...document.querySelectorAll('.governance-vault > h4')].find(node=>node.textContent.trim()==='Recent changes')?.nextElementSibling?.matches('.governance-action') ? [...document.querySelectorAll('.governance-vault > h4')].find(node=>node.textContent.trim()==='Recent changes').parentElement.querySelectorAll('.governance-action').length : 0,
+      recentActionCount:(()=>{const heading=[...document.querySelectorAll('.governance-vault > h4')].find(node=>node.textContent.trim()==='Recent changes');let count=0;for(let node=heading?.nextElementSibling;node&&!node.matches('h4');node=node.nextElementSibling)if(node.matches('.governance-action'))count++;return count})(),
+      warningGeometry:[...document.querySelectorAll('.governance-warning')].map(node=>{const r=node.getBoundingClientRect(),previous=node.previousElementSibling?.getBoundingClientRect(),details=node.nextElementSibling?.getBoundingClientRect();return {top:r.top,bottom:r.bottom,left:r.left,right:r.right,previousBottom:previous?.bottom,detailsTop:details?.top,display:getComputedStyle(node).display}}),
       xssExecuted:Boolean(window.__governanceXssSentinel)
     }})()""")
 
@@ -109,14 +110,19 @@ assert before["workspaceHidden"] is False and before["hash"] == "#governance"
 assert any(n["text"] == "Governance" and n["active"] for n in before["nav"])
 assert "Freshness: fresh" in before["text"] and "executed" in before["text"] and "Unknown" in before["text"] and "Pending approval action" in before["text"]
 assert before["text"].count("Executed change") == 9
+assert before["recentActionCount"] == 9
 assert "[object Object]" not in before["text"] and not before["xssExecuted"]
 assert after["text"].count("Older executed change") == 1 and "Older executed change" in after["html"]
 assert after["text"].count("Executed change") == 9 and after["text"].count("Older executed change") == 1
+assert after["recentActionCount"] == 10
+assert "Transfer 1 USDG" in after["text"] and "Pending approval action" in after["text"]
 assert before["scrollWidth"] <= before["clientWidth"] and after["scrollWidth"] <= after["clientWidth"]
 for evidence_set in (before, after):
     rects=evidence_set["actionRects"]
     assert all(rects[i]["bottom"] <= rects[i+1]["top"] for i in range(len(rects)-1)), rects
     assert evidence_set["sectionRects"]
+    for warning in evidence_set["warningGeometry"]:
+        assert warning["previousBottom"] <= warning["top"] and warning["bottom"] <= warning["detailsTop"], warning
 mobile = json.loads((OUT / "governance-mobile.json").read_text())
 assert mobile["scrollWidth"] <= mobile["clientWidth"]
 assert "Pending approval action" in mobile["text"] and "Older executed change" in mobile["text"]

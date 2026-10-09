@@ -13,5 +13,8 @@ const page=[{address:'w2',vaults:[{identity:{vaultAddress:'v2'},recentChanges:[{
 const positional=context.test.mergeGovernanceHistory(old[0].vaults[0].recentChanges,page[0].vaults[0].recentChanges);assert(!positional.some(x=>x.id==='old-2'),'fixture sanity');
 const sameSummary=context.test.mergeGovernanceHistory([{id:'a',decodedIntent:{summary:'same'}}],[{id:'b',decodedIntent:{summary:'same'}}]);assert.equal(sameSummary.length,2,'dedupe uses action id');
 const mergedPage=context.test.mergeGovernancePage({wallets:old}, {wallets:page});assert.equal(mergedPage.wallets.length,2,'pagination preserves wallets');assert.equal(mergedPage.wallets[0].vaults[0].recentChanges[0].id,'old-1','pagination preserves unrelated vault');assert.equal(mergedPage.wallets[1].vaults[0].recentChanges.length,2,'pagination appends matching vault history');
+const preserved={wallets:[{address:'w',vaults:[{identity:{vaultAddress:'v'},requiresAttention:[{id:'attention'}],currentActions:[{id:'current'}]}]}]};
+const pageResponse={wallets:[{address:'w',vaults:[{identity:{vaultAddress:'v'},requiresAttention:[],currentActions:[]}]}]};
+const preservedPage=context.test.mergeGovernancePage(preserved,pageResponse);assert.equal(preservedPage.wallets[0].vaults[0].requiresAttention.length,1,'pagination preserves attention');assert.equal(preservedPage.wallets[0].vaults[0].currentActions.length,1,'pagination preserves current actions');
 const invalid={...fixture,wallets:[{...fixture.wallets[0],vaults:[{...fixture.wallets[0].vaults[0],requiresAttention:{bad:true}}]}]};context.test.renderGovernance(invalid);assert(textTree(nodes.get('#governance-content')).includes('Requires attention'),'non-array attention handled');
 console.log('governance runtime ok');
