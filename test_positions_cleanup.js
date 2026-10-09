@@ -1,0 +1,11 @@
+const fs = require('fs');
+const html = fs.readFileSync('app.html','utf8');
+const js = fs.readFileSync('app.js','utf8');
+const css = fs.readFileSync('styles.css','utf8');
+if (/id="position-row"/.test(html)) throw new Error('static position-row remains');
+if (/id="position-list-status"/.test(html) || /position-list-status/.test(js)) throw new Error('position-list-status remains');
+if (/1 position detected/.test(js)) throw new Error('detected status remains');
+if (!/className="position-row"/.test(js)) throw new Error('dynamic rows missing');
+if (!/display:grid/.test(css) || !/grid-template-columns:minmax\(0,1fr\) auto/.test(css)) throw new Error('horizontal row layout missing');
+if (/meta\.textContent=version/.test(js) && /const protocol=position\.protocol/.test(js)) throw new Error('protocol-only label still emitted');
+console.log('positions cleanup assertions passed');
