@@ -117,3 +117,6 @@ html{background:var(--canvas)}body{background:var(--canvas);color:var(--ink)}
 .wallet-button .wallet-chip{height:40px;min-height:40px;display:inline-flex;align-items:center;transform:none}
 .wallet-button .wallet-chip:hover,.wallet-button .wallet-chip:focus-visible{transform:none}
 @media(max-width:720px){.header-actions{gap:8px}}
+
+/* Positions optimization: prevent detail-header collisions at narrow widths. */
+#position-card>header{display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap}#position-card>header>div{min-width:0;flex:1 1 260px}#position-card>header .status-pill{flex:0 1 auto;white-space:nowrap}@media(max-width:600px){#position-card>header .status-pill{white-space:normal}}
