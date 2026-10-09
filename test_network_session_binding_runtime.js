@@ -1,9 +1,9 @@
 const assert=require('assert'),fs=require('fs');
 const app=fs.readFileSync('app.js','utf8'),index=fs.readFileSync('index.html','utf8'),workspace=fs.readFileSync('app.html','utf8');
 const genesis='5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d';
-assert(index.includes("location.replace('/app.html?v=a95ff76')"),'published root enters workspace app');
+assert(index.includes("location.replace('/app.html?v=7626559')"),'published root enters workspace app');
 assert(index.includes('data-network="mainnet-beta"'),'published root exposes network selection');
-assert(workspace.includes('<script type="module" src="/app.js?v=a95ff76"></script>'),'published workspace loads versioned app.js');
+assert(workspace.includes('<script type="module" src="/app.js?v=7626559"></script>'),'published workspace loads versioned app.js');
 assert(fs.readFileSync('CNAME','utf8').trim()==='app.kelvara.xyz','published hostname parity');
 assert(app.includes('post("/api/auth/challenge",{wallet:address,network})'),'challenge sends selected network body');
 assert(app.includes('headers["x-kelvara-network"]=payload.network'),'authenticated POSTs send exact network header');
