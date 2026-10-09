@@ -38,7 +38,7 @@ fixture = {
         "display": {"name": "Canonical vault"},
         "membership": {"role": "member", "permissions": ["vote"], "threshold": 2, "memberCount": 3},
         "requiresAttention": [{"id": "active-1", "status": "active", "decodedIntent": {"summary": "Transfer 1 USDG"}, "approvalProgress": {"approved": 1, "threshold": 2}, "userStatus": "approval_required", "proposer": WALLET, "createdSlot": 100, "finalizedSlot": None, "sourceSignature": "", "instructions": [{"index": 0, "programId": WALLET, "accounts": [WALLET], "intent": {"kind": "transfer", "summary": "unresolved raw instruction"}, "unresolved": True}], "provenance": {"decoderFamily": "unknown", "decoderVersion": "0", "artifactHash": ""}, "unresolvedInstructionCount": 1}],
-        "currentActions": [],
+        "currentActions": [{"id": "current-1", "status": "active", "decodedIntent": {"summary": "Pending approval action"}, "approvalProgress": {"approved": 1, "threshold": 2}, "userStatus": "approval_required", "proposer": WALLET, "createdSlot": 150, "sourceSignature": "CurrentSig"}],
         "recentChanges": [{"id": f"executed-{i}", "status": "executed", "decodedIntent": {"summary": f"Executed change {i}"}, "proposer": WALLET, "approvalProgress": {"approved": 2, "threshold": 2}, "userStatus": "approved", "createdSlot": 200+i, "finalizedSlot": 201+i, "sourceSignature": "Sig-123"} for i in range(9)],
         "nextHistoryCursor": "cursor-page-2"
     }]}], "warnings": []
@@ -75,6 +75,9 @@ def evidence():
       nav:[...document.querySelectorAll('.workspace-nav a')].map(a=>({text:a.textContent,active:a.classList.contains('active')})),
       text:host?.innerText||'', html:host?.innerHTML||'', buttons:host?[...host.querySelectorAll('button')].map(b=>b.textContent.trim()):[],
       scrollWidth:document.documentElement.scrollWidth, clientWidth:document.documentElement.clientWidth,
+      sectionRects:[...document.querySelectorAll('.governance-vault > h4')].map(node=>({label:node.textContent.trim(),top:node.getBoundingClientRect().top,bottom:node.getBoundingClientRect().bottom})),
+      actionRects:[...document.querySelectorAll('.governance-action')].map(node=>({top:node.getBoundingClientRect().top,bottom:node.getBoundingClientRect().bottom})),
+      recentActionCount:[...document.querySelectorAll('.governance-vault > h4')].find(node=>node.textContent.trim()==='Recent changes')?.nextElementSibling?.matches('.governance-action') ? [...document.querySelectorAll('.governance-vault > h4')].find(node=>node.textContent.trim()==='Recent changes').parentElement.querySelectorAll('.governance-action').length : 0,
       xssExecuted:Boolean(window.__governanceXssSentinel)
     }})()""")
 
@@ -104,7 +107,16 @@ except Exception: pass
 print(json.dumps({"before": before, "after": after, "out": str(OUT)}, indent=2))
 assert before["workspaceHidden"] is False and before["hash"] == "#governance"
 assert any(n["text"] == "Governance" and n["active"] for n in before["nav"])
-assert "executed" in before["text"] and "Unknown" in before["text"]
+assert "Freshness: fresh" in before["text"] and "executed" in before["text"] and "Unknown" in before["text"] and "Pending approval action" in before["text"]
+assert before["text"].count("Executed change") == 9
 assert "[object Object]" not in before["text"] and not before["xssExecuted"]
 assert after["text"].count("Older executed change") == 1 and "Older executed change" in after["html"]
+assert after["text"].count("Executed change") == 9 and after["text"].count("Older executed change") == 1
 assert before["scrollWidth"] <= before["clientWidth"] and after["scrollWidth"] <= after["clientWidth"]
+for evidence_set in (before, after):
+    rects=evidence_set["actionRects"]
+    assert all(rects[i]["bottom"] <= rects[i+1]["top"] for i in range(len(rects)-1)), rects
+    assert evidence_set["sectionRects"]
+mobile = json.loads((OUT / "governance-mobile.json").read_text())
+assert mobile["scrollWidth"] <= mobile["clientWidth"]
+assert "Pending approval action" in mobile["text"] and "Older executed change" in mobile["text"]
