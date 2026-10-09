@@ -1,0 +1,15 @@
+const assert=require('assert'),fs=require('fs'),vm=require('vm');
+const src=fs.readFileSync('app.js','utf8');
+const start=src.indexOf('function legacyKaminoExitAllowed'),end=src.indexOf('function updateProtectionSurfaces');
+const ctx={evidence:null,walletSource:'phantom',walletAddress:'Wallet111',activeProvider:{isConnected:true,publicKey:{toString:()=> 'Wallet111'}},provider(){return this.activeProvider},connectedWalletIsCurrent(){return Boolean(ctx.activeProvider?.isConnected!==false&&ctx.activeProvider?.publicKey?.toString()==='Wallet111')},selectedPortfolioTarget:null,portfolioAvailable:true};
+ctx.STEAKHOUSE_KAMINO_VAULT='BoZDRc1RDY9FzUZZ19WT4GbtTnnbXQ8AGSU5ByEw3ut5';
+vm.runInNewContext(`${src.slice(start,end)};this.api={legacyKaminoExitAllowed,selectedPositionMutationAllowed}`,ctx);
+const steak='solana:mainnet-beta:kamino:kvault:BoZDRc1RDY9FzUZZ19WT4GbtTnnbXQ8AGSU5ByEw3ut5';
+const base={protocol:'kamino',protocolId:'kamino',targetId:steak,address:'BoZDRc1RDY9FzUZZ19WT4GbtTnnbXQ8AGSU5ByEw3ut5',vault:'BoZDRc1RDY9FzUZZ19WT4GbtTnnbXQ8AGSU5ByEw3ut5',totalShares:'10',underlyingAmount:'12',tokensPerShare:'1.2'};
+ctx.evidence={position:base};ctx.selectedPortfolioTarget=steak;assert.equal(ctx.api.selectedPositionMutationAllowed(),true,'canonical Steakhouse eligible');
+ctx.evidence={position:{...base,targetId:'solana:mainnet-beta:kamino:kvault:B5'}};ctx.selectedPortfolioTarget=ctx.evidence.position.targetId;assert.equal(ctx.api.selectedPositionMutationAllowed(),false,'B5 denied');
+ctx.evidence={position:base};ctx.selectedPortfolioTarget='solana:mainnet-beta:kamino:kvault:B5';assert.equal(ctx.api.selectedPositionMutationAllowed(),false,'canonical Steakhouse evidence cannot use B5 selection');
+ctx.evidence={position:base};ctx.selectedPortfolioTarget=steak;ctx.activeProvider={isConnected:true,publicKey:{toString:()=> 'OtherWallet'}};assert.equal(ctx.api.selectedPositionMutationAllowed(),false,'provider continuity denied');ctx.activeProvider={isConnected:true,publicKey:{toString:()=> 'Wallet111'}};
+ctx.evidence={position:{protocol:'Kamino Earn',vault:base.vault,totalShares:'10',underlyingAmount:'12',tokensPerShare:'1.2'}};ctx.selectedPortfolioTarget=null;assert.equal(ctx.api.selectedPositionMutationAllowed(),false,'missing target denied');
+ctx.evidence={position:base};ctx.selectedPortfolioTarget=steak;ctx.walletSource='address';assert.equal(ctx.api.selectedPositionMutationAllowed(),false,'view wallet denied');
+console.log('protection target binding runtime RED contract passed');
