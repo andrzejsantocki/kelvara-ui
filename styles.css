@@ -102,4 +102,4 @@ html{background:var(--canvas)}body{background:var(--canvas);color:var(--ink)}
 .modal{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:clamp(14px,4vw,48px)}
 .modal[hidden]{display:none!important}
 .wallet-selector-modal{align-items:center!important;justify-content:center!important}
-#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:120;max-width:min(90vw,520px);text-align:center}
+#toast{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:120;max-width:min(90vw,520px);text-align:center}
