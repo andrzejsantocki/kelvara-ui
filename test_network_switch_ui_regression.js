@@ -1,0 +1,14 @@
+const assert=require('assert'),fs=require('fs');
+const app=fs.readFileSync('app.js','utf8'),css=fs.readFileSync('styles.css','utf8'),html=fs.readFileSync('app.html','utf8');
+assert.match(css,/#network-context-label/,'network control has explicit production styling');
+assert.match(css,/\.modal\{[^}]*position:fixed/,'modal is viewport anchored');
+assert.match(css,/\.modal\{[^}]*justify-content:center/,'modal is horizontally centered');
+assert.match(css,/\.modal\{[^}]*align-items:center/,'modal is vertically centered');
+assert.match(css,/#toast[^}]*position:fixed/,'toast is viewport anchored');
+assert.match(css,/#toast[^}]*left:50%/,'toast is centered');
+assert.match(app,/NETWORK_RECONNECT_KEY/,'network switch records fresh-auth reconnect intent');
+assert.match(app,/connectWallet\(reconnect\.source\)/,'reload consumes reconnect intent');
+assert.match(app,/sessionStorage\.removeItem\(NETWORK_RECONNECT_KEY\)/,'reconnect intent is one-shot');
+assert.match(app,/clearNetworkScopedState\(\)/,'switch clears scoped state');
+assert.match(app,/previous\.disconnect/,'switch has provider disconnect barrier');
+console.log('network switch UI regression RED');

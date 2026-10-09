@@ -95,3 +95,11 @@ html{background:var(--canvas)}body{background:var(--canvas);color:var(--ink)}
 .wallet-chip.header-connect,#chip-address{color:#151814;}
 .wallet-chip.header-connect:hover #chip-address,.wallet-chip.header-connect:focus-visible #chip-address,.wallet-chip.header-connect:focus #chip-address{color:var(--ink);}
 .wallet-chip.header-connect:hover,.wallet-chip.header-connect:focus-visible,.wallet-chip.header-connect:focus{background:var(--surface);color:var(--ink);}
+
+/* Network switch and transient presentation contracts. */
+#network-context-label{min-height:32px;padding:0 12px;border:1px solid var(--line-strong);border-radius:999px;background:var(--surface);color:var(--ink);font:600 10px var(--mono);letter-spacing:.04em}
+#network-context-label:hover,#network-context-label:focus-visible{border-color:#849487;background:#f8faf6}
+.modal{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:clamp(14px,4vw,48px)}
+.modal[hidden]{display:none!important}
+.wallet-selector-modal{align-items:center!important;justify-content:center!important}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:120;max-width:min(90vw,520px);text-align:center}
