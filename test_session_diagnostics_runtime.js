@@ -1,9 +1,9 @@
 const assert=require('assert'),fs=require('fs'),vm=require('vm');
 const source=fs.readFileSync('app.js','utf8'),html=fs.readFileSync('app.html','utf8'),landing=fs.readFileSync('index.html','utf8');
-assert(/<script type="module" src="\/app\.js\?v=workspace-cleanup"><\/script>/.test(html),'published module cache-buster URL');
+assert(/<script type="module" src="\/app\.js\?v=protection-dashboard-20261010"><\/script>/.test(html),'published module cache-buster URL');
 assert(!/<script type="module" src="\/app\.js"><\/script>/.test(html),'stale module URL absent');
-assert(landing.includes("location.replace('/app.html?v=workspace-cleanup')"),'landing cache-buster URL');
-assert(!landing.includes("location.replace('/app.html')"),'stale landing URL absent');
+assert(landing.includes("location.replace('/app.html?v=session-fix-b933378')"),'landing cache-buster URL');
+assert(!landing.includes("location.replace('/app.html?v=workspace-cleanup')"),'stale landing URL absent');
 const key='DiagWalletFixture11111111111111111111111111111111',token='DiagBearerTokenFixture',genesis='EtWTRABZaYq6iMfeYKouRu166VU2xqa1wcaWoxPkrZBG',evidence={position:{name:'Diag Evidence Marker'},authority:{status:'Diag Authority Marker'},nonce:'DiagNonceMarker',signature:'DiagSignatureMarker'};
 function store(initial,options={}){return{data:new Map(Object.entries(initial||{})),getItem(k){if(k===options.readFailureKey||options.readFailureKeys?.includes(k))throw Object.assign(new Error('storage read secret marker'),{name:'Error'});return this.data.has(k)?this.data.get(k):null},setItem(k,v){this.data.set(k,String(v));if(options.onSet)options.onSet(k,v)},removeItem(k){if(k===options.removeFailureKey&&options.removeFailures-- > 0)throw Object.assign(new Error('storage cleanup secret marker'),{name:'Error'});this.data.delete(k)}}}
 function node(){return{classList:{add(){},remove(){},toggle(){}},style:{setProperty(){}},dataset:{},value:'',checked:false,disabled:false,textContent:'',innerHTML:'',onclick:null,onchange:null,onkeydown:null,addEventListener(){},setAttribute(){},replaceChildren(){},closest(){return this},getBoundingClientRect(){return{left:0,top:0,width:1,height:1}}}}
