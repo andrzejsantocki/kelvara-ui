@@ -1,7 +1,7 @@
 const assert=require('assert'),fs=require('fs'),vm=require('vm');
 const html=fs.readFileSync('app.html','utf8'),source=fs.readFileSync('app.js','utf8'),fixture=JSON.parse(fs.readFileSync('canonical_program_portfolio_two_vaults.json','utf8'));
 const ids=new Set([...html.matchAll(/id="([^"]+)"/g)].map(m=>m[1]));
-function node(tag='div'){const classes=new Set(['hidden']);return {tagName:tag,classList:{add(...x){x.forEach(v=>classes.add(v))},remove(...x){x.forEach(v=>classes.delete(v))},toggle(x,value){if(value===undefined)value=!classes.has(x);value?classes.add(x):classes.delete(x)},contains(x){return classes.has(x)}},style:{setProperty(){}},dataset:{},children:[],value:'',checked:false,disabled:false,textContent:'',innerHTML:'',onclick:null,onchange:null,onkeydown:null,hidden:false,append(...x){this.children.push(...x)},appendChild(x){this.children.push(x)},addEventListener(){},setAttribute(k,v){this[k]=v},getAttribute(k){return this[k]},replaceChildren(...x){this.children=x},closest(){return this},querySelectorAll(){return[]},getBoundingClientRect(){return {left:0,top:0,width:1,height:1}}};}
+function node(tag='div'){const classes=new Set(['hidden']);return {tagName:tag,classList:{add(...x){x.forEach(v=>classes.add(v))},remove(...x){x.forEach(v=>classes.delete(v))},toggle(x,value){if(value===undefined)value=!classes.has(x);value?classes.add(x):classes.delete(x)},contains(x){return classes.has(x)}},style:{setProperty(){}},dataset:{},children:[],value:'',checked:false,disabled:false,textContent:'',innerHTML:'',onclick:null,onchange:null,onkeydown:null,hidden:false,append(...x){this.children.push(...x);this.textContent=x.map(item=>item?.textContent??'').join('')},appendChild(x){this.children.push(x);this.textContent=this.children.map(item=>item?.textContent??'').join('')},addEventListener(){},setAttribute(k,v){this[k]=v},getAttribute(k){return this[k]},replaceChildren(...x){this.children=x},closest(){return this},querySelectorAll(){return[]},getBoundingClientRect(){return {left:0,top:0,width:1,height:1}}};}
 const nodes=new Map([...ids].map(id=>[id,node()]));
 const rows=[];const list=nodes.get('portfolio-positions');list.replaceChildren=(...x)=>{rows.splice(0);rows.push(...x);list.children=rows};
 const document={querySelector(s){if(s.startsWith('#'))return nodes.get(s.slice(1))||node();return node()},querySelectorAll(s){if(s==='#portfolio-positions .position-row')return rows;return[]},createElement:node,addEventListener(){}};
@@ -15,7 +15,7 @@ const canonicalFixture={...${JSON.stringify(fixture)},positions:${JSON.stringify
 renderPortfolio(canonicalFixture);
 const renderedRows=document.querySelectorAll('#portfolio-positions .position-row');
 assert.equal(renderedRows.length,2);
-assert.deepEqual(renderedRows.map(r=>r.children[0].textContent),['Institutional Commodity Yield','Steakhouse USDG High Yield']);
+assert.deepEqual(renderedRows.map(r=>r.children[1].children[0].textContent),['Institutional Commodity Yield','Steakhouse USDG High Yield']);
 assert.deepEqual(renderedRows.map(r=>r.dataset.targetId),canonicalFixture.positions.map(p=>p.targetId));
 renderedRows[0].onclick();
 assert.equal(renderedRows[0].getAttribute('aria-selected'),'true');
