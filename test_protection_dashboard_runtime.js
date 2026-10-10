@@ -1,7 +1,8 @@
 const assert=require('assert'),fs=require('fs');
 const html=fs.readFileSync('app.html','utf8'),js=fs.readFileSync('app.js','utf8'),css=fs.readFileSync('styles.css','utf8');
 for(const id of ['protection-summary','protected-position-count','signed-evacuation-count','protection-coverage-state','protection-coverage-bar','protection-position-rows','protection-empty','protection-education','selected-protection-details'])assert(html.includes(`id="${id}"`),`missing #${id}`);
-for(const copy of ['Configure automated exit protection for your positions and prepare signed evacuations in advance.','Protected positions','Signed evacuations','Your positions','How protection works','Selected protection details'])assert(html.includes(copy),`missing copy: ${copy}`);
+for(const copy of ['Configure automated exit protection for your positions and prepare signed evacuations in advance.','Protected positions','Signed evacuations','Your positions','How protection works','If your configured safeguard conditions are breached, the prepared evacuation will be triggered.'])assert(html.includes(copy),`missing copy: ${copy}`);
+for(const redundant of ['Selected protection details','Review readiness and available actions for this position.','id="selected-protection-intro"','the prepared evacuation can be triggered.'])assert(!html.includes(redundant)&&!js.includes(redundant),`redundant protection copy: ${redundant}`);
 for(const stale of ['<h1>Exit protection</h1>','Arm exit protection','signed exit variants','Not armed'])assert(!html.includes(stale),`stale protection copy: ${stale}`);
 for(const fn of ['protectionPositionModel','primaryProtectionAction','renderProtectionDashboard','selectProtectionPosition'])assert(js.includes(`function ${fn}`),`missing ${fn}`);
 assert(js.includes('position.protection.evacuationStatus==="active"'),'manual exit readiness must require active evacuation');
