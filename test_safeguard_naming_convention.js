@@ -1,0 +1,10 @@
+const fs=require('fs'),assert=require('assert');
+const html=fs.readFileSync('app.html','utf8'),app=fs.readFileSync('app.js','utf8');
+assert(html.includes('Baseline safeguards'));
+assert(html.includes('Common protections applied by default.'));
+assert(html.includes('Tailored safeguards'));
+assert(html.includes('Protections configured for this user, account, or position.'));
+assert(app.includes("visibility:privateMarker?'tailored':'baseline'"));
+assert(app.includes("filter(item=>item.visibility==='tailored')"));
+for(const obsolete of ['Private safeguard review','Private safeguard configuration required','Private safeguard armed'])assert(!html.includes(obsolete)&&!app.includes(obsolete),`obsolete copy remains: ${obsolete}`);
+console.log('safeguard naming convention ok');
