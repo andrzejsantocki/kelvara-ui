@@ -1,12 +1,12 @@
 const assert=require('assert'),fs=require('fs');
 const html=fs.readFileSync('app.html','utf8'),js=fs.readFileSync('app.js','utf8'),css=fs.readFileSync('styles.css','utf8');
-for(const id of ['protection-cleanup','protection-cleanup-title','protection-cleanup-copy','review-protection-cleanup','protection-cleanup-modal','cleanup-review-title','cleanup-review-impact','cleanup-account-count','cleanup-rent','cleanup-advanced','cleanup-account-list','cleanup-cancel','cleanup-confirm','cleanup-message'])assert(html.includes(`id="${id}"`),`missing #${id}`);
-for(const copy of ['Protection cleanup','Review cleanup','Advanced details','Solana accounts','Review transaction'])assert(html.includes(copy),`missing ${copy}`);
-for(const stale of ['Nonce management','ACCOUNT CLEANUP','Recoverable rent</small>','Authorization</small>'])assert(!html.includes(stale),`customer-facing implementation detail: ${stale}`);
+for(const id of ['protection-cleanup','protection-cleanup-title','protection-cleanup-copy','review-protection-cleanup','protection-cleanup-modal','cleanup-review-title','cleanup-review-impact','cleanup-cancel','cleanup-confirm','cleanup-message'])assert(html.includes(`id="${id}"`),`missing #${id}`);
+for(const copy of ['Remove protection','Disable protection and clean up the associated Solana accounts. Recoverable rent will be returned to your wallet.','Wallet signature required'])assert(html.includes(copy),`missing ${copy}`);
+for(const stale of ['Protection cleanup','Review cleanup','Review protection cleanup','Advanced details','Solana accounts</h3>','Recoverable rent: calculated before confirmation','Calculated before confirmation','Authorization</small>','eligible rent','authorization accounts','stored evacuation authorization','account count'])assert(!html.includes(stale),`customer-facing implementation detail: ${stale}`);
 for(const fn of ['renderProtectionCleanup','openProtectionCleanupReview','closeProtectionCleanupReview'])assert(js.includes(`function ${fn}`),`missing ${fn}`);
-assert(js.includes("mode==='active'?'Remove existing protection':'Review protection cleanup'"),'active and releasable states must differ');
-assert(js.includes("mode==='active'?'Remove protection':'Review transaction'"),'destructive action must match state');
-assert(js.includes("details.open=false"),'advanced details start collapsed');
+assert(js.includes("mode:'releasable'")&&js.includes("mode:'active'"),'active and releasable states must remain distinct');
+assert(js.includes("button.disabled=walletSource==='address'||!activeProvider||CURRENT_NETWORK==='devnet'"),'removal remains wallet-gated');
+assert(js.includes("confirm.textContent='Remove protection'"),'destructive action must match state');
 assert(!js.includes("labels={unsupported:'Not supported yet'"),'disabled unsupported button must not render');
 assert(css.includes('.protection-cleanup-card')&&css.includes('.cleanup-review-card'),'cleanup card/modal styles missing');
 console.log('protection cleanup UX contract passed');
