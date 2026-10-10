@@ -1,0 +1,13 @@
+const fs=require('fs');
+const assert=require('assert');
+const html=fs.readFileSync('app.html','utf8');
+const css=fs.readFileSync('styles.css','utf8');
+const link=html.match(/<a class="workspace-health-link"[^>]*>[\s\S]*?<\/a>\s*<span id="health"/);
+assert(link,'Health link must sit immediately above the live network status');
+assert.match(link[0],/href="https:\/\/status\.kelvara\.xyz\/"/,'Health link must open the public status page');
+assert.match(link[0],/<svg[^>]*aria-hidden="true"/,'Health link must include a decorative icon');
+assert.match(link[0],/>Health</,'Health label missing');
+assert.match(link[0],/target="_blank"/,'Health page should open separately');
+assert.match(link[0],/rel="noopener noreferrer"/,'external link isolation missing');
+assert.match(css,/\.workspace-health-link\{[^}]*display:flex[^}]*\}/,'Health link styling missing');
+console.log('sidebar Health link: ok');
