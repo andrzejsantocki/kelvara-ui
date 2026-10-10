@@ -1,0 +1,15 @@
+const assert=require('assert'),fs=require('fs'),vm=require('vm');
+const src=fs.readFileSync('app.js','utf8');
+const start=src.indexOf('function protectionPositionModel');
+const end=src.indexOf('function protectionStatusCopy',start);
+const steak='BoZDRc1RDY9FzUZZ19WT4GbtTnnbXQ8AGSU5ByEw3ut5',b5='B5pjfZAiKjyUEuqB2694NHrsjcaM67uuJaWqjzTVtzR6';
+const ctx={overviewPositionData:p=>({name:p.displayName,amount:p.details.underlyingAmount,symbol:'USDG',brand:'kamino'}),protectionStatus:null,selectedPortfolioTarget:null,evidence:null,protocolIconFor:()=>'',CURRENT_NETWORK:'mainnet-beta',networkLabel:()=> 'Mainnet',networkIconFor:()=>'',formatPortfolioAmount:v=>Number(v).toFixed(4),STEAKHOUSE_KAMINO_VAULT:steak};
+vm.runInNewContext(src.slice(start,end)+';this.api={protectionPositionModel,primaryProtectionAction}',ctx);
+const position=address=>({targetId:`solana:mainnet-beta:kamino:kvault:${address}`,protocol:'kamino',protocolId:'kamino',resourceType:'kvault',address,network:'mainnet-beta',displayName:address===steak?'Steakhouse':'Institutional',details:{vault:address,totalShares:'1',underlyingAmount:'1',tokensPerShare:'1'}});
+const supported=ctx.api.protectionPositionModel(position(steak)),unsupported=ctx.api.protectionPositionModel(position(b5));
+assert.strictEqual(supported.protection.eligible,true);
+assert.strictEqual(ctx.api.primaryProtectionAction(supported),'enroll');
+assert.strictEqual(unsupported.protection.eligible,false);
+assert.strictEqual(ctx.api.primaryProtectionAction(unsupported),'unsupported');
+assert.strictEqual(unsupported.protection.ineligibleReason,'Protection enrollment is not supported for this position yet.');
+console.log('protection enrollment eligibility runtime passed');
