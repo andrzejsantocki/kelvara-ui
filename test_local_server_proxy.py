@@ -16,9 +16,13 @@ spec.loader.exec_module(local_server)
 
 class FakeUpstream(http.server.BaseHTTPRequestHandler):
     seen_authorization = None
+    seen_network = None
+    seen_genesis = None
 
     def do_GET(self):
         FakeUpstream.seen_authorization = self.headers.get("Authorization")
+        FakeUpstream.seen_network = self.headers.get("X-Kelvara-Network")
+        FakeUpstream.seen_genesis = self.headers.get("X-Kelvara-Genesis")
         if self.path == "/api/protection/status":
             body = json.dumps({"error": "Authentication required"}).encode()
             self.send_response(401)
@@ -60,7 +64,7 @@ class LocalProxyAuthTests(unittest.TestCase):
     def test_authenticated_protection_request_reaches_upstream_and_preserves_json_401(self):
         request = urllib.request.Request(
             self.proxy_url("/api/protection/status"),
-            headers={"Authorization": "Bearer handoff-token"},
+            headers={"Authorization": "Bearer handoff-token", "X-Kelvara-Network": "mainnet-beta", "X-Kelvara-Genesis": "fixture-genesis"},
         )
         with self.assertRaises(urllib.error.HTTPError) as caught:
             urllib.request.urlopen(request, timeout=2)
@@ -69,6 +73,8 @@ class LocalProxyAuthTests(unittest.TestCase):
         self.assertEqual(response.headers.get_content_type(), "application/json")
         self.assertEqual(json.load(response)["error"], "Authentication required")
         self.assertEqual(FakeUpstream.seen_authorization, "Bearer handoff-token")
+        self.assertEqual(FakeUpstream.seen_network, "mainnet-beta")
+        self.assertEqual(FakeUpstream.seen_genesis, "fixture-genesis")
 
     def test_non_json_upstream_body_is_relayed_without_proxy_json_decode(self):
         response = urllib.request.urlopen(self.proxy_url("/api/html"), timeout=2)

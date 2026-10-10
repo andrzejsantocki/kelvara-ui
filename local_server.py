@@ -11,7 +11,7 @@ UPSTREAM = "http://192.168.0.193:7650"
 
 def forwarded_headers(headers):
     forwarded = {"Origin": "https://app.kelvara.xyz"}
-    for key in ("Content-Type", "Authorization"):
+    for key in ("Content-Type", "Authorization", "X-Kelvara-Network", "X-Kelvara-Genesis"):
         if headers.get(key):
             forwarded[key] = headers[key]
     return forwarded
