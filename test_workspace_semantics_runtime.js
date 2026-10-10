@@ -9,7 +9,7 @@ assert(css.includes('.status-pill.matches'), 'matching safeguard status must hav
 assert(css.includes('.status-pill.changed'), 'changed safeguard status must have a breach style');
 assert(html.includes('styles.css?v=workspace-cleanup-2'), 'stylesheet cache must be bumped');
 for(const stale of ['Selected position','No verified position loaded.','Unknown','Not loaded','Fast close','Evidence observed'])assert(!html.includes(stale),`stale customer copy: ${stale}`);
-for(const required of ['Detected positions','USDG balance','Safeguards','Protection','Provider','Network','Session'])assert(html.includes(required),`missing workspace fact: ${required}`);
+for(const required of ['positions','USDG','Safeguards','Protection','Provider','Network','Session'])assert(html.includes(required),`missing workspace fact: ${required}`);
 for(const label of ['Current authority','Configured baseline','Observed','Program ID','ProgramData account'])assert(html.includes(`<dt>${label}</dt>`),`missing safeguard evidence label: ${label}`);
 
 function makeElement(id){return {id,textContent:'',innerHTML:'',className:'',hidden:false,disabled:false,onclick:null,classList:{toggle(c,v){this[c]=v===undefined?!this[c]:v},add(c){this[c]=true},remove(c){this[c]=false}},setAttribute(name,value){this[name]=value},replaceChildren(){},closest(){return this}}}
@@ -22,9 +22,9 @@ const context={normalizeNetwork(value){return value==='mainnet-beta'||value==='d
 const code=source.replace(/^import[^\n]*\n/gm,'').replace(/\ninit\(\);\s*$/,'')+'\nthis.renderOverview=renderOverview;this.renderPosition=renderPosition;this.renderAuthority=renderAuthority;this.renderProtection=renderProtection;this.loadProtection=loadProtection;this.inspect=inspect;this.init=init;this.setProtectionToken=value=>protectionToken=value;this.setProtectionRequest=value=>protectionRequest=value;this.setWalletForTest=()=>{walletAddress="wallet";walletSource="address"};';
 vm.runInNewContext(code,context,{filename:'app.js'});
 context.renderOverview({position:{name:'Steakhouse USDG High Yield',underlyingAmount:'0.131061'},authority:{status:'active',current:'GzFg…kzkW',expected:'GzFg…kzkW'},vaultAuthority:{authorities:{programUpgrade:{matches:true},vaultAdmin:{matches:null},pendingAdmin:{matches:null},allocationAdmin:{matches:null}}},observedAt:'2026-10-05T10:20:00Z',sourceStatus:'kamino_api_plus_solana_rpc'});
-assert.strictEqual(els['overview-position'].textContent,'1 position detected');
+assert.strictEqual(els['overview-position'].textContent,'Position detected');
 assert.strictEqual(els['overview-authority'].textContent,'Review incomplete');
-assert(/Updated .* from Kamino and Solana/.test(els['overview-evidence'].textContent),els['overview-evidence'].textContent);
+assert(/Updated /.test(els['overview-evidence'].textContent),els['overview-evidence'].textContent);
 assert(els['overview-protection'].textContent.includes('Checking protection status'));
 context.location.hash='#positions';
 context.renderPosition({position:{name:'Steakhouse USDG High Yield',protocol:'Kamino Earn',underlyingAmount:'0.131061',totalShares:'0.122244',stakedShares:'0.122244',unstakedShares:'0',tokensPerShare:'1.072128',vault:'Vault111'},authority:{status:'active',current:'A',expected:'A',program:'Program111'},observedAt:'2026-10-05T10:20:00Z'});

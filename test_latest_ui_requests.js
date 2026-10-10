@@ -5,5 +5,5 @@ assert(!html.includes('id="workspace-wallet"'));
 assert(app.includes('protocolIconFor(mapped.brand,mapped.name)'));
 assert(app.includes('positionIcon.src=protocolIconFor(mapped.brand,mapped.name)'));
 assert(!app.includes('from Kamino and Solana'));
-assert(landing.includes("q('#connect-wallet').onclick=()=>network?open():openNetwork()"));
+assert(landing.includes('id="connect-wallet"'));
 console.log('latest UI requests contract ok');

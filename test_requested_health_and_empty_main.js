@@ -1,0 +1,11 @@
+const assert=require('assert');
+const fs=require('fs');
+const html=fs.readFileSync('app.html','utf8');
+const css=fs.readFileSync('styles.css','utf8');
+assert(html.includes('<span id="health" class="network live"><i></i> Mainnet live</span>'),'health indicator must show Mainnet live');
+const aside=html.match(/<aside class="workspace-drawer">([\s\S]*?)<\/aside>/)?.[1]||'';
+assert(aside.includes('id="health"'),'health indicator must remain in workspace drawer');
+assert(css.includes('.workspace-drawer>#health{margin-top:auto'),'health indicator must be anchored bottom-left');
+assert(!/<main[^>]*>\s*<input id="wallet"[\s\S]*?<\/main>/.test(html),'empty hidden-controls main must be removed');
+for(const id of ['wallet','inspect','message'])assert(html.includes(`id="${id}"`),`hidden compatibility control #${id} must remain`);
+console.log('requested health and empty-main contract passed');
