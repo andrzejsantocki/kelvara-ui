@@ -8,7 +8,7 @@ assert(app.includes('position.details?.underlyingAmount'));
 assert(app.includes("'Underlying token'"));
 assert(app.includes('position.valuation?.usdValue'));
 assert(app.includes("valuation?.status==='current'"));
-assert(html.includes('USD value unavailable'));
+assert(!html.includes('USD value unavailable until verified price data is available.'));
 assert(!html.includes('vs. last 7 days'),'unsupported historical claim');
 assert(!html.includes('+2.1%'),'invented performance claim');
 assert(css.includes('.overview-position-row'));
