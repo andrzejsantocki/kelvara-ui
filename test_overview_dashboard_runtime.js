@@ -1,0 +1,12 @@
+const fs=require('fs'),assert=require('assert');
+const html=fs.readFileSync('app.html','utf8'),app=fs.readFileSync('app.js','utf8'),css=fs.readFileSync('styles.css','utf8');
+for(const id of ['overview-summary','overview-total','overview-position','overview-protocols','overview-authority','overview-protection','overview-positions','overview-freshness'])assert(html.includes(`id="${id}"`),`missing ${id}`);
+assert(html.includes('Portfolio overview'));
+assert(app.includes('function renderOverviewPortfolio'));
+assert(app.includes('protocolIconFor(position.protocolId'));
+assert(html.includes('USD value unavailable'));
+assert(!html.includes('vs. last 7 days'),'unsupported historical claim');
+assert(!html.includes('+2.1%'),'invented performance claim');
+assert(css.includes('.overview-position-row'));
+assert(css.includes('@media(max-width:720px)'));
+console.log('overview dashboard contract ok');
