@@ -1,0 +1,12 @@
+const assert=require('assert'),fs=require('fs');
+const html=fs.readFileSync('app.html','utf8'),js=fs.readFileSync('app.js','utf8'),css=fs.readFileSync('styles.css','utf8');
+for(const id of ['protection-cleanup','protection-cleanup-title','protection-cleanup-copy','review-protection-cleanup','protection-cleanup-modal','cleanup-review-title','cleanup-review-impact','cleanup-account-count','cleanup-rent','cleanup-advanced','cleanup-account-list','cleanup-cancel','cleanup-confirm','cleanup-message'])assert(html.includes(`id="${id}"`),`missing #${id}`);
+for(const copy of ['Protection cleanup','Review cleanup','Advanced details','Solana accounts','Review transaction'])assert(html.includes(copy),`missing ${copy}`);
+for(const stale of ['Nonce management','ACCOUNT CLEANUP','Recoverable rent</small>','Authorization</small>'])assert(!html.includes(stale),`customer-facing implementation detail: ${stale}`);
+for(const fn of ['renderProtectionCleanup','openProtectionCleanupReview','closeProtectionCleanupReview'])assert(js.includes(`function ${fn}`),`missing ${fn}`);
+assert(js.includes("mode==='active'?'Remove existing protection':'Review protection cleanup'"),'active and releasable states must differ');
+assert(js.includes("mode==='active'?'Remove protection':'Review transaction'"),'destructive action must match state');
+assert(js.includes("details.open=false"),'advanced details start collapsed');
+assert(!js.includes("labels={unsupported:'Not supported yet'"),'disabled unsupported button must not render');
+assert(css.includes('.protection-cleanup-card')&&css.includes('.cleanup-review-card'),'cleanup card/modal styles missing');
+console.log('protection cleanup UX contract passed');
