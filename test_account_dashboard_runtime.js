@@ -1,0 +1,15 @@
+const assert=require('assert'),fs=require('fs'),vm=require('vm');
+const html=fs.readFileSync('app.html','utf8'),js=fs.readFileSync('app.js','utf8'),css=fs.readFileSync('styles.css','utf8');
+for(const id of ['account-summary-grid','account-current-plan','account-covered-positions','account-safeguard-level','account-automation','account-plan-coverage','account-wallet-card','account-service-status','account-copy-address','account-disconnect'])assert(html.includes(`id="${id}"`),`missing #${id}`);
+for(const copy of ['Manage your plan, wallet connection, and protection coverage.','Current plan','Covered positions','Safeguard level','Protection automation','Connected wallet','Service status'])assert(html.includes(copy),`missing ${copy}`);
+assert(html.includes('Plan &amp; coverage'),'missing Plan & coverage');
+for(const asset of ['/assets/wallets/solflare.svg','/assets/wallets/phantom.svg','/assets/wallets/backpack.svg','/assets/networks/solana.svg'])assert(fs.existsSync(`.${asset}`),`missing official asset ${asset}`);
+for(const fn of ['normalizeWalletProvider','renderAccountDashboard','copyAccountAddress'])assert(js.includes(`function ${fn}`),`missing ${fn}`);
+assert(js.includes('navigator.clipboard.writeText(walletAddress)'),'copy must use clipboard API');
+assert(js.includes('coveredPositions'),'coverage must derive from covered positions');
+assert(js.includes("location.hash='#protection'"),'protection CTA missing');
+assert(js.includes("disconnectWallet"),'disconnect action missing');
+assert(!html.includes('Loading authenticated session…</p><dl class="account-facts"'),'legacy account metadata screen remains');
+assert(css.includes('.account-summary-grid')&&css.includes('.account-details-grid')&&css.includes('.account-service-status'),'dashboard styles missing');
+assert(css.includes('@media(max-width:720px)')&&css.includes('.account-summary-grid{grid-template-columns:1fr}'),'mobile stack missing');
+console.log('account dashboard contract passed');
