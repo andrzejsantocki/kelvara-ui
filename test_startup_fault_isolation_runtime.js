@@ -1,0 +1,8 @@
+const assert=require('assert'),fs=require('fs');
+const source=fs.readFileSync('app.js','utf8'),html=fs.readFileSync('app.html','utf8');
+assert.match(source,/const tasks=\[loadHealth\(\),inspect\(\),loadProtection\(\)\];[\s\S]*tasks\.push\(loadGovernance\(\)\);await Promise\.allSettled\(tasks\)/,'startup services must settle independently');
+assert.match(source,/function bindServiceRetries\(\)/,'per-service retry controls must be bound');
+for(const id of ['service-alerts','retry-portfolio','retry-protection','retry-governance'])assert(html.includes(`id="${id}"`),`missing recovery control ${id}`);
+assert.match(source,/if\(portfolioState\)\{[\s\S]*Stale portfolio data/,'portfolio refresh failure must preserve last valid data');
+assert.match(source,/Promise\.allSettled\(\[inspect\(\),loadProtection\(\),loadGovernance\(\)\]\)/,'manual retry must isolate service failures');
+console.log('startup fault isolation contract passed');
