@@ -3,7 +3,9 @@ const html=fs.readFileSync('app.html','utf8'),app=fs.readFileSync('app.js','utf8
 for(const id of ['overview-summary','overview-total','overview-position','overview-protocols','overview-authority','overview-protection','overview-positions','overview-freshness'])assert(html.includes(`id="${id}"`),`missing ${id}`);
 assert(html.includes('Portfolio overview'));
 assert(app.includes('function renderOverviewPortfolio'));
-assert(app.includes('protocolIconFor(position.protocolId'));
+assert(app.includes('protocolIconFor(mapped.brand,mapped.name)'));
+assert(app.includes('position.details?.underlyingAmount'));
+assert(app.includes("'Underlying token'"));
 assert(html.includes('USD value unavailable'));
 assert(!html.includes('vs. last 7 days'),'unsupported historical claim');
 assert(!html.includes('+2.1%'),'invented performance claim');
