@@ -5,6 +5,8 @@ for(const copy of ['Nonce management','Release all unused nonce accounts','Recov
 assert(js.includes('function renderNonceManagement'),'nonce renderer missing');
 assert(js.includes('async function revokeAllNonces'),'revoke-all handler missing');
 assert(js.includes('protectionStatus.revocationRequired'),'authoritative revocation list required');
+assert(js.includes('protectionStatus.variants'),'active backend permit nonce list required');
+for(const copy of ['Active protection nonce','Revoke protection and release all nonce accounts'])assert(js.includes(copy),`missing active nonce state: ${copy}`);
 assert(js.includes('revokeProtection()'),'existing signed revoke workflow must be reused');
 assert(css.includes('.nonce-management-card'),'nonce management styles missing');
 console.log('nonce management runtime contract passed');
