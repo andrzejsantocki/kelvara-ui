@@ -1,0 +1,10 @@
+const assert=require('assert'),fs=require('fs');
+const html=fs.readFileSync('app.html','utf8'),js=fs.readFileSync('app.js','utf8'),css=fs.readFileSync('styles.css','utf8');
+for(const id of ['nonce-management','nonce-management-count','nonce-management-list','revoke-all-nonces','nonce-management-message'])assert(html.includes(`id="${id}"`),`missing #${id}`);
+for(const copy of ['Nonce management','Release all unused nonce accounts','Recoverable rent','Wallet signature required'])assert(html.includes(copy),`missing ${copy}`);
+assert(js.includes('function renderNonceManagement'),'nonce renderer missing');
+assert(js.includes('async function revokeAllNonces'),'revoke-all handler missing');
+assert(js.includes('protectionStatus.revocationRequired'),'authoritative revocation list required');
+assert(js.includes('revokeProtection()'),'existing signed revoke workflow must be reused');
+assert(css.includes('.nonce-management-card'),'nonce management styles missing');
+console.log('nonce management runtime contract passed');
