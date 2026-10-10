@@ -1,0 +1,10 @@
+const assert=require('assert'),fs=require('fs');
+const html=fs.readFileSync('app.html','utf8'),js=fs.readFileSync('app.js','utf8'),css=fs.readFileSync('styles.css','utf8');
+for(const id of ['protection-summary','protected-position-count','signed-evacuation-count','protection-coverage-state','protection-coverage-bar','protection-position-rows','protection-empty','protection-education','selected-protection-details'])assert(html.includes(`id="${id}"`),`missing #${id}`);
+for(const copy of ['Configure automated exit protection for your positions and prepare signed evacuations in advance.','Protected positions','Signed evacuations','Your positions','How protection works','Selected protection details'])assert(html.includes(copy),`missing copy: ${copy}`);
+for(const stale of ['<h1>Exit protection</h1>','Arm exit protection','signed exit variants','Not armed'])assert(!html.includes(stale),`stale protection copy: ${stale}`);
+for(const fn of ['protectionPositionModel','primaryProtectionAction','renderProtectionDashboard','selectProtectionPosition'])assert(js.includes(`function ${fn}`),`missing ${fn}`);
+assert(js.includes('position.protection.evacuationStatus==="active"'),'manual exit readiness must require active evacuation');
+assert(css.includes('.protection-summary-grid')&&css.includes('.protection-position-row[aria-selected="true"]'),'dashboard and selection styles missing');
+assert(css.includes('@media(max-width:720px)')&&css.includes('.protection-position-head{display:none}'),'mobile position cards missing');
+console.log('protection dashboard contract passed');
