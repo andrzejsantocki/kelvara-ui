@@ -1,0 +1,27 @@
+const assert=require('assert'),fs=require('fs'),vm=require('vm');
+const source=fs.readFileSync('app.js','utf8');
+function el(tag='div'){return{tagName:tag.toUpperCase(),children:[],dataset:{},textContent:'',className:'',hidden:false,attributes:{},open:false,classList:{add(){},remove(){},toggle(){}},setAttribute(k,v){this.attributes[k]=v},appendChild(x){this.children.push(x);return x},append(...x){this.children.push(...x)},replaceChildren(...x){this.children=x}}}
+const host=el(),els={'safeguards-groups':host,'safeguards-monitored':el(),'safeguards-attention':el(),'safeguards-action-windows':el(),'safeguards-loading':el(),'safeguards-error':el(),'safeguards-empty':el()};
+const document={createElement:tag=>el(tag),querySelector:s=>s[0]==='#'?els[s.slice(1)]:null};
+const ctx={document,$:s=>document.querySelector(s),setText:(s,v)=>{const x=document.querySelector(s);if(x)x.textContent=String(v)}};
+const start=source.indexOf('const SAFEGUARD_GROUP_ORDER'),end=source.indexOf('async function loadGroupedSafeguards');
+vm.runInNewContext(source.slice(start,end)+';this.renderGroupedSafeguards=renderGroupedSafeguards',ctx);
+const rule=(vaultId,status='intact')=>({id:'admin-authority-changed',name:'Admin authority unchanged',status,severity:status==='breached'?'critical':'safe',observedAt:'2026-10-11T00:00:00.000Z',technicalEvidence:{vaultId,positionId:`position:${vaultId}`,source:'kamino-indexer',evidenceRef:`evidence:${vaultId}`,decoderVersion:'1',observedAt:'2026-10-11T00:00:00.000Z'}});
+const vault=(vaultId,name,asset,status,history,evidenceVaultId=vaultId)=>({vaultId,positionId:`position:${vaultId}`,name,protocol:'Kamino',asset,summary:{monitored:5,needsAttention:status==='breached'?1:0,actionWindows:0,status},history,groups:[{id:'governance-admin',name:'Governance & admin controls',status,history,rules:[rule(evidenceVaultId,status)]}]});
+const payload={summary:{monitored:5,needsAttention:1,actionWindows:0},groups:[{id:'legacy',rules:[]}],vaults:[vault('A','Vault A','USDC','breached',[{date:'2026-10-10',status:'breached'}]),vault('B','Vault B','USDG','intact',[{date:'2026-10-10',status:'intact'}])]};
+ctx.renderGroupedSafeguards(payload);
+assert.strictEqual(host.children.length,2,'renders vaults only, not legacy top-level groups');
+const [a,b]=host.children;
+assert.strictEqual(a.dataset.vaultId,'A');assert.strictEqual(b.dataset.vaultId,'B');
+assert.match(a.className,/status-breached/);assert.match(b.className,/status-intact/);
+assert.strictEqual(a.open,false);assert.strictEqual(b.open,false);
+const text=n=>[n.textContent,...n.children.flatMap(c=>text(c))].join(' ');
+assert.match(text(a),/Vault A/);assert.match(text(a),/USDC/);assert.match(text(a),/Breach detected/);
+assert.match(text(b),/Vault B/);assert.match(text(b),/USDG/);assert.match(text(b),/No issues/);
+const titles=n=>[n.title,...n.children.flatMap(titles)].filter(Boolean);assert(titles(a).some(x=>/2026-10-10: Breach detected/.test(x)));assert(titles(b).some(x=>/2026-10-10: No issues/.test(x)));
+const findRule=n=>n.dataset?.ruleId?n:n.children.map(findRule).find(Boolean);assert.strictEqual(findRule(a).dataset.ruleId,'admin-authority-changed');
+assert.strictEqual(findRule(b).dataset.ruleId,'admin-authority-changed');
+a.open=true;assert.strictEqual(b.open,false,'expanding vault A does not mutate vault B');
+ctx.renderGroupedSafeguards({summary:payload.summary,vaults:[vault('A','Vault A',null,'intact',[], 'WRONG'),{...vault('B','Vault B',null,'intact',[]),protocol:null}]});
+const [missingA,missingB]=host.children;assert.match(text(missingA),/Unknown/);assert.match(text(missingB),/Unknown/);assert.doesNotMatch(text(missingA),/evidence:A/,'mismatched technical evidence is not rendered as valid');
+console.log('vault-scoped safeguards projection runtime passed');
