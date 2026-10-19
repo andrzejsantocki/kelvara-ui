@@ -1,0 +1,14 @@
+const assert=require("assert"),fs=require("fs"),vm=require("vm");
+const src=fs.readFileSync("app.js","utf8"),html=fs.readFileSync("app.html","utf8");
+assert(src.includes("renderWalletSafeguardProjection({walletAddress:address,portfolio,ownerProjection:portfolio.ownerSafeguards})")===false,"UI must not consume removed ownerSafeguards contract");
+const start=src.indexOf("function setText"),end=src.indexOf("async function inspect");
+const ctx={};vm.runInNewContext(`${src.slice(start,end)};this.api={projectWalletSafeguards,renderPortfolioSafeguards,renderWalletSafeguardProjection}`,ctx);
+const api=ctx.api;
+const wire={walletId:"owner",policyRevision:7,positions:[{targetId:"vault-1",protocol:"kamino",adapterVersion:1,display:{name:"Main vault"},safeguards:[{bindingId:"global-binding",ruleId:"authority",ruleVersion:1,result:"pass",reason:null},{bindingId:"private-binding",ruleId:"owner-policy",ruleVersion:1,result:"unknown",reason:"missing_receipt"}]}],protocolStatuses:[],coverage:{state:"partial",expected:2,satisfied:1}};
+const projected=api.projectWalletSafeguards(wire,null);
+assert.deepEqual(projected.map(x=>x.bindingId),["global-binding","private-binding"],"real position safeguards survive projection");
+assert(projected.every(x=>x.visibility==="global"),"unmarked safeguards cannot be called private");
+assert(!Object.prototype.hasOwnProperty.call(wire,"ownerSafeguards"),"fixture matches production wire contract");
+assert(/renderWalletSafeguardProjection\(\{walletAddress:address,portfolio\}\)/.test(src),"inspect path passes canonical portfolio only");
+assert(html.includes("private-safeguard-review"),"review entry remains available only when supported private marker exists");
+console.log("portfolio wire contract runtime passed");
