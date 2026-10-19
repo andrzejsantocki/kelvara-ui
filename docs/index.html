@@ -192,13 +192,13 @@
 
       <section id="contact">
         <h2>Contact</h2>
-        <p><a href="mailto:help@kelvara.xyz">help@kelvara.xyz</a><br><a href="mailto:contact@kelvara.xyz">contact@kelvara.xyz</a></p>
+        <p><a data-email-local="help" href="#">Help email</a><br><a data-email-local="contact" href="#">Contact email</a></p>
         <p>Last updated: <time datetime="2026-09-27">27 September 2026</time>.</p>
       </section>
     </main>
   </div>
 
   <footer class="site-footer wrap"><span>Kelvara · © <span data-current-year></span></span></footer>
-  <script>document.querySelectorAll('[data-current-year]').forEach((element) => { element.textContent = new Date().getFullYear(); });</script>
+  <script>document.querySelectorAll('[data-current-year]').forEach((element) => { element.textContent = new Date().getFullYear(); });document.querySelectorAll('[data-email-local]').forEach((element)=>{const address=`${element.dataset.emailLocal}${String.fromCharCode(64)}kelvara.xyz`;element.href=`mailto:${address}`;element.textContent=address;});</script>
 </body>
 </html>

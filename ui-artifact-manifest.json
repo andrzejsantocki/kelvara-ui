@@ -1,0 +1,264 @@
+{
+  "schemaVersion": 1,
+  "canonicalSource": "KELVARA-V4/ui",
+  "canonicalSourceCommit": "37c52da40136299e9924deb8db9c927407b21193",
+  "deploymentTarget": "andrzejsantocki/kelvara-ui:main:/",
+  "generatedAt": "2026-10-19T11:05:15.900Z",
+  "files": [
+    {
+      "path": ".nojekyll",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "CNAME",
+      "bytes": 16,
+      "sha256": "cd5a599d3876e7b706e0c1eaecfb958df66dbc363981a585cf6c54b2107423c2"
+    },
+    {
+      "path": "animal-identicon.js",
+      "bytes": 8399,
+      "sha256": "0fb1ffed568ca49885552bdc79ae3d024d562a5dcd28000a97c2553eb5a76373"
+    },
+    {
+      "path": "api-session-policy.js",
+      "bytes": 1256,
+      "sha256": "ed5dba7d3a9ac847868077306ef5497ca83e9df47a56c38959a01aa3ed98866c"
+    },
+    {
+      "path": "app.html",
+      "bytes": 29219,
+      "sha256": "4adc5ba2ec7fc9e515ace81d2bbeb99692e70c21be5915c186799f103150b241"
+    },
+    {
+      "path": "app.js",
+      "bytes": 169812,
+      "sha256": "3034a8e543cb2146e44bf7ed69a821969b9522971585cf0e75c2b053177b986e"
+    },
+    {
+      "path": "assets/custom/fallback.svg",
+      "bytes": 189,
+      "sha256": "f628aea7e6c1b53c79ee0a2279880d0b31b9633f2ab6e8b3ad974c2740634774"
+    },
+    {
+      "path": "assets/custom/kelvara-governance-lab.svg",
+      "bytes": 435,
+      "sha256": "c9a740e76b35a301888f9d6faa236411bebf148ffc4dda106670686b57da6218"
+    },
+    {
+      "path": "assets/custom/registry.js",
+      "bytes": 341,
+      "sha256": "f98a6a0a5701e4016d8c4a7f3fe662e96ce83af2d04133b63587ed9303b7b98c"
+    },
+    {
+      "path": "assets/kelvara-icon.png",
+      "bytes": 143985,
+      "sha256": "38b4a98db89be7e561604210935bf4657353fa44665ab1f116c04fca1169f69b"
+    },
+    {
+      "path": "assets/landing.css",
+      "bytes": 18195,
+      "sha256": "e31361186139f8fe0fcb335346ca4caf95b7ea14fc066ef68ba95e826d355a7c"
+    },
+    {
+      "path": "assets/networks/registry.js",
+      "bytes": 323,
+      "sha256": "d567e685e4f48b0b23ad02e3f6dbeb57aa5d7223737915a6889a0885d88e1631"
+    },
+    {
+      "path": "assets/networks/solana.svg",
+      "bytes": 424,
+      "sha256": "e2f5f48f2ed34d0d863ee25c9ad214de4ba84929a1a5bdfdd86acc86efc376fd"
+    },
+    {
+      "path": "assets/posthog.js",
+      "bytes": 2106,
+      "sha256": "9288463178ecb2587cca32d3885a5b952d31300a2ce20551736847f1ed90cf75"
+    },
+    {
+      "path": "assets/protocols/kamino.svg",
+      "bytes": 406,
+      "sha256": "b084661ec3ad0521f7fa106eaeeae9d483b49afdfa9caf0bc8100ecd483d144e"
+    },
+    {
+      "path": "assets/protocols/registry.js",
+      "bytes": 651,
+      "sha256": "5abe1b45e9da200862bab0cf893d1d604828dd3d6a95ede0fa86102e47264665"
+    },
+    {
+      "path": "assets/protocols/steakhouse.svg",
+      "bytes": 1560,
+      "sha256": "658563cb9337f78372b507071a18fabec93a14062da94c8f64fe2ab1c50ca297"
+    },
+    {
+      "path": "assets/site.css",
+      "bytes": 5320,
+      "sha256": "6675cb4edd713b2eb28db2c6cffeae89bdab6d004cc6a1e502f66ee282136c33"
+    },
+    {
+      "path": "assets/solana-logo.svg",
+      "bytes": 6205,
+      "sha256": "ccdc416707911112da5933a6ed9f60ce1f819333e70447a5701bc012d6865f51"
+    },
+    {
+      "path": "assets/tokens/registry.js",
+      "bytes": 609,
+      "sha256": "4c65c51e15c4c6ccc63eb359cb7a8eebc7143432b81548f29e4e2c8dd976ebf1"
+    },
+    {
+      "path": "assets/tokens/solana.svg",
+      "bytes": 1231,
+      "sha256": "35472f0ee6e700a48c5c19c975dfe89242d987c415ec969ed5b0b6a3a487c301"
+    },
+    {
+      "path": "assets/tokens/usdc.svg",
+      "bytes": 1696,
+      "sha256": "913adf09fc3097cfee7f76a3226bacd52237f2ac714817d68eaf73bfc3a72109"
+    },
+    {
+      "path": "assets/tokens/usdg.png",
+      "bytes": 6241,
+      "sha256": "fa58e85ede7faba7b852c34e75c7df020d5a788065e07e2bd0cbe9fc8f500517"
+    },
+    {
+      "path": "assets/tokens/usdg.svg",
+      "bytes": 16884,
+      "sha256": "3e6051d6f17def5214f248b60a02d00f84feb278769048188fa058a495233b9a"
+    },
+    {
+      "path": "assets/tokens/usdt.svg",
+      "bytes": 15949,
+      "sha256": "6058a431a6daf2b0fcc91d8a317e252c24e49b45246d021d40f928555bfd7531"
+    },
+    {
+      "path": "assets/wallets/backpack.svg",
+      "bytes": 697,
+      "sha256": "66eb9928103f8dd13b324c428989a8e3a42cff7465aef60b45e0c5da50505106"
+    },
+    {
+      "path": "assets/wallets/phantom.svg",
+      "bytes": 1134,
+      "sha256": "2f238875a4b52e80eac9acfdd7e30bd9d81e7f8d13a3faff80cacd6cf413cddd"
+    },
+    {
+      "path": "assets/wallets/solflare.svg",
+      "bytes": 1643,
+      "sha256": "792b1985a75726b03655429e8debfa49c63452c44a18c487ba22ef1eeb072afe"
+    },
+    {
+      "path": "devnet-demo-context.mjs",
+      "bytes": 1239,
+      "sha256": "498728f74296d75303d0660f84f9d6477116fd310497405559f674944e6e4eac"
+    },
+    {
+      "path": "devnet-readonly.mjs",
+      "bytes": 3588,
+      "sha256": "06852338e16e9b1b22fe14fc66cfa9181be6b4a4d7bb766d5611a3be0c75e45a"
+    },
+    {
+      "path": "docs/index.html",
+      "bytes": 17117,
+      "sha256": "ad11b7e0fb6561ce664ce2318dc7ad0589d1f1881e078cd446d2f7bcda301aa8"
+    },
+    {
+      "path": "dom-poller.mjs",
+      "bytes": 831,
+      "sha256": "68b89ea112c45a5fb0066ce922ff64b7fc64175207d7aefeaac1d6fcbf6f1965"
+    },
+    {
+      "path": "favicon.ico",
+      "bytes": 12918,
+      "sha256": "2ff73917571dbddf2d6953b2414eaf72304cf12db0c7d04f1c6c8b3353775e41"
+    },
+    {
+      "path": "favicon.png",
+      "bytes": 143985,
+      "sha256": "38b4a98db89be7e561604210935bf4657353fa44665ab1f116c04fca1169f69b"
+    },
+    {
+      "path": "favicon.svg",
+      "bytes": 195,
+      "sha256": "03a228a9c5fc2087934b3a86d18515b6cf2cf5a786fd8285f63f0dc6ed6d1f54"
+    },
+    {
+      "path": "feedback.js",
+      "bytes": 1662,
+      "sha256": "9b6a5994a214758b500de942ccffa7144a436ca8e31fa300d6f09f4dd86a0ed2"
+    },
+    {
+      "path": "icon.png",
+      "bytes": 143985,
+      "sha256": "38b4a98db89be7e561604210935bf4657353fa44665ab1f116c04fca1169f69b"
+    },
+    {
+      "path": "index.html",
+      "bytes": 37797,
+      "sha256": "6aae06d307c3f269e5beed2e6eda81a03074effd6a4febca73c65e24edeb787d"
+    },
+    {
+      "path": "manifest.webmanifest",
+      "bytes": 344,
+      "sha256": "e047243e22041086c3661d626ba48b59aa9daacba1478e1c0ad8adc066a81148"
+    },
+    {
+      "path": "network-identity.mjs",
+      "bytes": 749,
+      "sha256": "3c885302c47f2c0337a291fb266a82e42e0d21d90a7a4d9471088ce04a1b4874"
+    },
+    {
+      "path": "og-image.svg",
+      "bytes": 943,
+      "sha256": "081ba9acc02ee4176be0cb8de4271f1f41fdeef8b03c3da8d564a569e09cf7a3"
+    },
+    {
+      "path": "patch-positions.css",
+      "bytes": 2056,
+      "sha256": "49c8471c0d6bd18452bc232d107584c89eabb9d8bd6356daa130af539d5e29d7"
+    },
+    {
+      "path": "protected-withdraw.js",
+      "bytes": 2568,
+      "sha256": "d56b531dfda4709964b8f62a54707b69bb120357d4674c6116af0a9b2f7e6419"
+    },
+    {
+      "path": "protection-action-binding.mjs",
+      "bytes": 382,
+      "sha256": "ce054c756d0bd3deeb3d46e9cce5bb982ba7068c363fddac51f88fcc03f8bc33"
+    },
+    {
+      "path": "robots.txt",
+      "bytes": 65,
+      "sha256": "ce71376c06c02b965b4af43c9707f285ccb14e5c761e014fe4f53dbd17ce6d85"
+    },
+    {
+      "path": "sitemap.xml",
+      "bytes": 419,
+      "sha256": "bb9adb6f336d7f4095e20d676c8f41d79e1d12f5541cd00ec620a28ce26f3323"
+    },
+    {
+      "path": "styles.css",
+      "bytes": 104225,
+      "sha256": "be9eafe54af6d3bf9932651f90d68479bded58f6ec6fab81afa1593a3f496182"
+    },
+    {
+      "path": "vendor/solana-web3.min.js",
+      "bytes": 463860,
+      "sha256": "09cdbea951b2ed0e11bcbe3aeb1ee9f035f9fb51ed212aca645475ae82688cc3"
+    },
+    {
+      "path": "wallet-disconnect-state.mjs",
+      "bytes": 1282,
+      "sha256": "ae6a31ebc3a66605dd7856c8879c2c24333d74940c847eb24c3c311b46d2b897"
+    },
+    {
+      "path": "withdraw-success-focus.js",
+      "bytes": 840,
+      "sha256": "fde954d4ee07760c5b1177a89629adf3ab0404c3e2fd0236224e0aa4ebbc0bce"
+    },
+    {
+      "path": "withdraw-success.js",
+      "bytes": 1434,
+      "sha256": "332a0ca97f472c987c3b834a732009ecdb96f735264588bbe4c58569a86dd8b3"
+    }
+  ]
+}
