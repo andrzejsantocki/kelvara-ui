@@ -1,0 +1,12 @@
+const assert=require('assert');
+const fs=require('fs');
+const html=fs.readFileSync('app.html','utf8');
+const js=fs.readFileSync('app.js','utf8');
+assert.strictEqual((html.match(/class="wordmark"/g)||[]).length,0,'top branding must be removed');
+assert.strictEqual((html.match(/class="workspace-brand"/g)||[]).length,1);
+assert(html.includes('href="#account"'));
+assert(!html.includes('workspace-pane:first-child'));
+assert(html.includes('id="network-control"'),'unified network wallet control missing');
+assert(js.includes('walletState'),'wallet state machine missing');
+assert(js.includes('Connection failed'),'error state missing');
+console.log('shell runtime contract passed');
