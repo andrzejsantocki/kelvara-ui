@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "canonicalSource": "KELVARA-V4/ui",
-  "canonicalSourceCommit": "37c52da40136299e9924deb8db9c927407b21193",
+  "canonicalSourceCommit": "d3afa2ffb4fa62f05210550593aa3921b5168f36",
   "deploymentTarget": "andrzejsantocki/kelvara-ui:main:/",
-  "generatedAt": "2026-10-19T11:05:15.900Z",
+  "generatedAt": "2026-10-19T11:10:33.362Z",
   "files": [
     {
       "path": ".nojekyll",
@@ -192,8 +192,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 37797,
-      "sha256": "6aae06d307c3f269e5beed2e6eda81a03074effd6a4febca73c65e24edeb787d"
+      "bytes": 37825,
+      "sha256": "698af089f12b3126b5c9302cf43b0a0da35574ad39f4c4996841409d0be2ce19"
     },
     {
       "path": "manifest.webmanifest",
